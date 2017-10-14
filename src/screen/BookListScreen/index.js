@@ -66,7 +66,11 @@ export default class BookPackage extends React.PureComponent {
   }
 
   componentDidMount(){
-    SplashScreen.hide();
+    
+    setTimeout(()=>{
+      SplashScreen.hide();
+    },2000);
+    
   }
 
   _OpenMenu() {
@@ -92,7 +96,7 @@ export default class BookPackage extends React.PureComponent {
     getNet.refreshSingleChapter(book); 
     tha.setState({
          dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !==
-    r2}).cloneWithRows(booklist), });     
+    r2}).cloneWithRows(booklist), });
 
     DeviceStorage.save('booklist',booklist);
   }

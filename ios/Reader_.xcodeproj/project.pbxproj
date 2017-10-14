@@ -39,8 +39,8 @@
 		399FF3FFA76C4C6CA9982EC9 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 127DA262BFC14786889EF8BB /* Octicons.ttf */; };
 		5AFC30A3965B477880D150F7 /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 951ECA3FE429419C9EC5C01C /* libSplashScreen.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
-		61D33FC21F8A6D730066FBB7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D33FC11F8A6D730066FBB7 /* Launch Screen.storyboard */; };
-		61D33FF31F8A6EF80066FBB7 /* Index-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D33FF21F8A6EF80066FBB7 /* Index-1.png */; };
+		61D301FF1F8C920500EA8397 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D301FE1F8C920500EA8397 /* Launch Screen.storyboard */; };
+		61D33FF31F8A6EF80066FBB7 /* IndexX.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D33FF21F8A6EF80066FBB7 /* IndexX.png */; };
 		6E8A2AE35E3346C09201CE18 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E0D5C35CA2EC408699D280D3 /* MaterialIcons.ttf */; };
 		74E70C1286CD49A689DAD0C2 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 81BA2D520F4145E3BBCB3F97 /* Ionicons.ttf */; };
 		80C363EBD18A4666A3799809 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E63B1E5D547240648636CB99 /* Zocial.ttf */; };
@@ -340,8 +340,8 @@
 		2D02E4901E0B4A5D006451C7 /* Reader_-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Reader_-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		320E17DBD1E344C2924B6AE4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		61D33FC11F8A6D730066FBB7 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "../../Reader_F/ios/Launch Screen.storyboard"; sourceTree = "<group>"; };
-		61D33FF21F8A6EF80066FBB7 /* Index-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Index-1.png"; path = "Reader_/Index-1.png"; sourceTree = "<group>"; };
+		61D301FE1F8C920500EA8397 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		61D33FF21F8A6EF80066FBB7 /* IndexX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = IndexX.png; path = Reader_/IndexX.png; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		81BA2D520F4145E3BBCB3F97 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
@@ -501,7 +501,7 @@
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				61D33FF21F8A6EF80066FBB7 /* Index-1.png */,
+				61D33FF21F8A6EF80066FBB7 /* IndexX.png */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -594,7 +594,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				61D33FC11F8A6D730066FBB7 /* Launch Screen.storyboard */,
+				61D301FE1F8C920500EA8397 /* Launch Screen.storyboard */,
 				13B07FAE1A68108700A75B9A /* Reader_ */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* Reader_Tests */,
@@ -1090,12 +1090,12 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				D92D7473DB13433BB36113BE /* Entypo.ttf in Resources */,
 				1E2EB35E1DCC45668A51DB51 /* EvilIcons.ttf in Resources */,
+				61D301FF1F8C920500EA8397 /* Launch Screen.storyboard in Resources */,
 				2ED52D33F2AB4CC3833D5F9F /* Feather.ttf in Resources */,
 				937BEB06BC22417CB148D2F4 /* FontAwesome.ttf in Resources */,
-				61D33FC21F8A6D730066FBB7 /* Launch Screen.storyboard in Resources */,
 				CC86960E339548F782C24EE3 /* Foundation.ttf in Resources */,
 				74E70C1286CD49A689DAD0C2 /* Ionicons.ttf in Resources */,
-				61D33FF31F8A6EF80066FBB7 /* Index-1.png in Resources */,
+				61D33FF31F8A6EF80066FBB7 /* IndexX.png in Resources */,
 				380ABBE9A2AE49349CB494F5 /* MaterialCommunityIcons.ttf in Resources */,
 				6E8A2AE35E3346C09201CE18 /* MaterialIcons.ttf in Resources */,
 				399FF3FFA76C4C6CA9982EC9 /* Octicons.ttf in Resources */,
@@ -1276,6 +1276,7 @@
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = Reader_/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1302,6 +1303,7 @@
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = Reader_/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
