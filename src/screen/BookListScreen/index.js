@@ -1,15 +1,8 @@
-import React, {Component} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ListView,
-  TouchableOpacity,
-  StatusBar
-} from 'react-native';
+import React, { Component } from 'react';
+import { Text, View, ListView, TouchableOpacity, StatusBar, AsyncStorage } from 'react-native';
 
 import SplashScreen from 'react-native-splash-screen';
-import {Icon} from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import SideMenu from 'react-native-side-menu';
 import Swipeout from 'react-native-swipeout';
 
@@ -19,14 +12,14 @@ import styles from './index.style';
 import getNet from '../../util/getNet';
 
 
-let booklist,tht,tha,RefreshCount = 0;
+let booklist, tht, tha, RefreshCount = 0;
 
 /**
  * 包装层，为了保证能使用侧滑的菜单
  - code by Czq
  */
 export default class BookPackage extends React.PureComponent {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({ navigation }) => {
     return {
       title: '古意流苏',
       headerBackTitle: ' ',
@@ -43,8 +36,8 @@ export default class BookPackage extends React.PureComponent {
             color='#fff'
             size={42}
             iconStyle={{
-            marginRight: 15
-          }}/>
+              marginRight: 15
+            }} />
         </TouchableOpacity>
       ),
       headerTitleStyle: {
@@ -65,20 +58,20 @@ export default class BookPackage extends React.PureComponent {
     };
   }
 
-  componentDidMount(){
-    
-    setTimeout(()=>{
+  componentDidMount() {
+
+    setTimeout(() => {
       SplashScreen.hide();
-    },2000);
-    
+    }, 2000);
+
   }
 
   _OpenMenu() {
-    this.setState({isOpen: true});
+    this.setState({ isOpen: true });
   }
 
   updateMenuState(isOpen) {
-    this.setState({isOpen: isOpen});
+    this.setState({ isOpen: isOpen });
   }
 
   _addBook(data) {
@@ -86,33 +79,36 @@ export default class BookPackage extends React.PureComponent {
       bookName: data.name,
       author: data.author,
       url: data.url,
+      recordNum: 0,
       recordChapter: '',
       latestChapter: '待检测',
       recordPage: 1,
       plantformId: data.plantFormId,
     };
     console.log(data);
-    booklist.push(book);     
-    getNet.refreshSingleChapter(book); 
+    booklist.push(book);
+    getNet.refreshSingleChapter(book);
     tha.setState({
-         dataSource: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !==
-    r2}).cloneWithRows(booklist), });
-
-    DeviceStorage.save('booklist',booklist);
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (r1, r2) => r1 !==
+          r2
+      }).cloneWithRows(booklist),
+    });
+    AsyncStorage.setItem('booklist', JSON.stringify(booklist));
   }
 
   render() {
-    const menu = <Menu navigation={this.props.navigation} addBook={this._addBook}/>;
+    const menu = <Menu navigation={this.props.navigation} addBook={this._addBook} />;
     return ((
       <View style={styles.container}>
-      <StatusBar barStyle="light-content"/>
+        <StatusBar barStyle="light-content" />
         <SideMenu
           menu={menu}
           isOpen={this.state.isOpen}
           onChange={isOpen => this.updateMenuState(isOpen)}
           menuPosition={'right'}
           disableGestures={true}>
-          <BookList navigation={this.props.navigation}/>
+          <BookList navigation={this.props.navigation} />
         </SideMenu>
       </View>
     ));
@@ -122,55 +118,62 @@ export default class BookPackage extends React.PureComponent {
 class BookList extends React.PureComponent {
   constructor(props) {
     super(props);
-    const ds = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
-    });
+
     tha = this;
+
     this.deleteBook = this.deleteBook.bind(this);
-    this._renderRow = this._renderRow.bind(this);
-    this._onRefresh = this._onRefresh.bind(this);
-    this._renderSeparator = this._renderSeparator.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+    this.onRefresh = this.onRefresh.bind(this);
+    this.renderSeparator = this.renderSeparator.bind(this);
+    this.initx = this.initx.bind(this);
 
     this.state = {
       dataSource: '',
       load: true
     };
+    this.initx();
+  }
 
-    DeviceStorage.get('booklist').then(val => {
-        if (val === null || val.length === 0) {
-          booklist = [
-            {
-              bookName: '美食供应商',
-              author: '菜猫',
-              url: 'http://www.biqiuge.com/book/6888/',
-              recordChapter: 'http://www.biqiuge.com/book/6888/4560933.html',
-              latestChapter: '待检测',
-              recordPage: 1,
-              plantformId: 5
-            }, {
-              bookName: '飞剑问道',
-              author: '我吃西红柿',
-              url: 'http://www.biqiuge.com/book/24277/',
-              recordChapter: 'http://www.biqiuge.com/book/24277/15320481.html',
-              latestChapter: '待检测',
-              recordPage: 1,
-              plantformId: 5
-            }
-          ];
-          alert('发现书架为空，自动添加书籍。');
-          DeviceStorage.save('booklist', booklist);
-          this.setState({
-            dataSource: ds.cloneWithRows(booklist),
-            load: false
-          });
-        } else {
-          booklist = val;
-          this.setState({
-            dataSource: ds.cloneWithRows(val),
-            load: false
-          });
+  async initx() {
+    const ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2
+    });
+    const val = JSON.parse(await AsyncStorage.getItem('booklist'));
+    if (val === null || val.length === 0) {
+      booklist = [
+        {
+          bookName: '美食供应商',
+          author: '菜猫',
+          url: 'http://www.biqiuge.com/book/6888/',
+          recordNum: 0,
+          recordChapter: '',
+          latestChapter: '待检测',
+          recordPage: 1,
+          plantformId: 5
+        }, {
+          bookName: '飞剑问道',
+          author: '我吃西红柿',
+          url: 'http://www.biqiuge.com/book/24277/',
+          recordNum: 0,
+          recordChapter: '',
+          latestChapter: '待检测',
+          recordPage: 1,
+          plantformId: 5
         }
+      ];
+      alert('发现书架为空，自动添加书籍。');
+      AsyncStorage.setItem('booklist', JSON.stringify(booklist))
+      this.setState({
+        dataSource: ds.cloneWithRows(booklist),
+        load: false
       });
+    } else {
+      booklist = val;
+      this.setState({
+        dataSource: ds.cloneWithRows(val),
+        load: false
+      });
+    }
   }
 
   deleteBook(deleteId) {
@@ -180,12 +183,12 @@ class BookList extends React.PureComponent {
         rowHasChanged: (r1, r2) => r1 !== r2
       }).cloneWithRows(booklist)
     }, () => {
-      DeviceStorage.save('booklist', booklist);
+      AsyncStorage.setItem('booklist', JSON.stringify(booklist));
     });
   }
 
-  _renderRow(rowData, sectionID, rowID) {
-    const {navigate} = this.props.navigation;
+  renderRow(rowData, sectionID, rowID) {
+    const { navigate } = this.props.navigation;
     return (
       <Swipeout
         right={[{
@@ -195,17 +198,17 @@ class BookList extends React.PureComponent {
           },
           backgroundColor: 'red'
         }
-      ]}
+        ]}
         autoClose={true}
         sectionID={sectionID}
         close={!(this.state.sectionID === sectionID && this.state.rowID === rowID)}
         backgroundColor={'#F5FCFF'}>
         <TouchableOpacity
           onPress={() => {
-          navigate('Read', {
-            bookNum: booklist.indexOf(rowData)
-          });
-        }}>
+            navigate('Read', {
+              bookNum: booklist.indexOf(rowData)
+            });
+          }}>
           <View style={{
             height: 52
           }}>
@@ -220,13 +223,13 @@ class BookList extends React.PureComponent {
       </Swipeout >
     );
   }
-  _renderSeparator() {
-    return (<View style={styles.solid}/>);
+  renderSeparator() {
+    return (<View style={styles.solid} />);
   }
-  _onRefresh(PullRefresh) {
+  onRefresh(PullRefresh) {
     getNet.refreshChapter(booklist, () => {
       RefreshCount++;
-      if (RefreshCount != booklist.length) 
+      if (RefreshCount != booklist.length)
         return;
       this.setState({
         dataSource: new ListView.DataSource({
@@ -234,27 +237,25 @@ class BookList extends React.PureComponent {
         }).cloneWithRows(booklist)
       }, () => {
         RefreshCount = 0;
-        DeviceStorage.save('booklist', booklist);
+        AsyncStorage.setItem('booklist', JSON.stringify(booklist));
         PullRefresh.onRefreshEnd();
       });
     });
   }
 
   render() {
-    return (this.state.load
-      ? (false)
-      : (
+    return (this.state.load? (false): (
         <View style={styles.container}>
           <ListView
             style={{
-            flex: 1
-          }}
+              flex: 1
+            }}
             renderScrollComponent={(props) => <PullRefreshScrollView
-            onRefresh={(PullRefresh) => this._onRefresh(PullRefresh)}
-            {...props}/>}
+              onRefresh={(PullRefresh) => this.onRefresh(PullRefresh)}
+              {...props} />}
             dataSource={this.state.dataSource}
-            renderSeparator={this._renderSeparator}
-            renderRow={this._renderRow}/>
+            renderSeparator={this.renderSeparator}
+            renderRow={this.renderRow} />
         </View>
       ));
   }

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity,AsyncStorage } from 'react-native';
 import React from 'react';
 
 
@@ -21,18 +21,11 @@ class Menu extends React.PureComponent {
         }).done();
     }
 
-    CleanData() {
+    async CleanData() {
+        let listStr = await AsyncStorage.getItem('booklist');
+        await AsyncStorage.clear();
+        await AsyncStorage.setItem('booklist', listStr);
         alert('除书架记录之外的数据已经全部清空');
-        let booklist;
-        DeviceStorage.get('booklist').then(val => {
-            booklist = val;
-        })
-            .then(() => {
-                DeviceStorage.cleanAll()
-                    .then(() => {
-                        DeviceStorage.save('booklist', booklist);
-                    });
-            });
     }
 
     render() {

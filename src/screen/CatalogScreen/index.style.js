@@ -5,22 +5,22 @@ export default {
     marginTop: 20,
     marginBottom: 10,
     color: '#8a8a8a'
-},
-rowStyle: {
+  },
+  rowStyle: {
     marginTop: 12,
     marginLeft: 15,
     color: '#565656'
-},
-solid: {
+  },
+  solid: {
     height: 1,
     backgroundColor: '#969696',
     marginLeft: 15,
     marginRight: 20
-},
-red: {
+  },
+  red: {
     color: '#AF3E28'
-},
-gDwn: {
+  },
+  gDwn: {
     color: '#fff'
-}
+  }
 }

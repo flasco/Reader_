@@ -1,9 +1,9 @@
 export default {
-  container : {
+  container: {
     flex: 1,
     backgroundColor: '#F5FCFF'
   },
-  input : {
+  input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
@@ -13,24 +13,24 @@ export default {
     marginRight: 7,
     padding: 2
   },
-  text : {
+  text: {
     flex: 1
   },
-  textCenter : {
+  textCenter: {
     textAlign: 'center'
   },
-  solid : {
+  solid: {
     height: 1,
     backgroundColor: '#969696',
     marginLeft: 15,
     marginRight: 20
   },
-  rowStyle : {
+  rowStyle: {
     marginTop: 18,
     marginLeft: 20,
     fontSize: 15
   },
-  footerContainer : {
+  footerContainer: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -38,7 +38,7 @@ export default {
     padding: 10,
     height: 44
   },
-  footerText : {
+  footerText: {
     fontSize: 14,
     color: '#555555'
   }

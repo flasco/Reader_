@@ -2,8 +2,8 @@ export default {
   container: {
     flex: 1,
     backgroundColor: '#F5FCFF'
-},
-input: {
+  },
+  input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
@@ -12,25 +12,25 @@ input: {
     marginLeft: 7,
     marginRight: 7,
     padding: 2,
-},
-hint: {
+  },
+  hint: {
     color: 'gray',
     fontSize: 12,
     textAlign: 'center',
-    paddingTop:6,
-},
-text: {
+    paddingTop: 6,
+  },
+  text: {
     flex: 1,
-},
-solid: {
+  },
+  solid: {
     height: 1,
     backgroundColor: '#969696',
     marginLeft: 15,
     marginRight: 20
-},
-rowStyle: {
+  },
+  rowStyle: {
     marginTop: 18,
     marginLeft: 20,
     fontSize: 15,
-},
+  },
 }

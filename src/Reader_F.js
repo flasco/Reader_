@@ -14,11 +14,11 @@ import RankScreen from './screen/RankScreen'
 
 import { StackNavigator } from 'react-navigation';
 
-import DeviceStorage from './util/DeviceStorage';
+// import DeviceStorage from './util/DeviceStorage';
 import axios from 'axios';
 
 global.axios = axios;
-global.DeviceStorage = DeviceStorage;
+// global.DeviceStorage = DeviceStorage;
 
 SearchScreen.navigationOptions = ({navigation}) => {
   return {
