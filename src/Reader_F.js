@@ -30,21 +30,6 @@ ReadScreen.navigationOptions = ({ navigation }) => {
   return { header: null };
 };
 
-RankScreen.navigationOptions = ({navigation}) => {
-  return {
-    title: '起点排行',
-    //左上角的返回键文字, 默认是上一个页面的title  IOS 有效
-    headerBackTitle: ' ',
-    //导航栏的style
-    headerStyle: {
-      backgroundColor: '#000'
-    },
-    headerTitleStyle: {
-      color: '#fff',
-      alignSelf: 'center'
-    }
-  };
-};
 
 const Reader_F = StackNavigator({
   Home: { screen: BookListScreen },

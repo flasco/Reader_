@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, FlatList, Button, AsyncStorag
 import urlTool from 'url';
 
 import { list } from '../../services/book';
-import { HeaderBackButton } from 'react-navigation'
+import { HeaderBackButton } from 'react-navigation';
 
 import styles from './index.style';
 

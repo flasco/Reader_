@@ -1,10 +1,34 @@
 import { StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import React, { Component } from 'react';
 
+import { HeaderBackButton } from 'react-navigation'
+
+import { rnk } from '../../services/book';
+
 import styles from './index.style';
 
 let tht;
 class RankScreen extends React.PureComponent {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: '起点排行',
+      headerLeft: (
+        <HeaderBackButton
+          title='返回'
+          tintColor={'#fff'}
+          onPress={() => {
+            navigation.goBack();
+          }} />
+      ),
+      headerStyle: {
+        backgroundColor: '#000'
+      },
+      headerTitleStyle: {
+        color: '#fff',
+        alignSelf: 'center'
+      }
+    };
+  };
   constructor(props) {
     super(props);
 
@@ -26,24 +50,23 @@ class RankScreen extends React.PureComponent {
     this.getNet(currentPag++);
   }
 
-  getNet(page = 1) {
-    let url = `https://testdb.leanapp.cn/rnklist?p=${page}`;
-    axios.get(url, { timeout: 5000 }).then(Response => {
-      let data = this.state.dataSource;
-      data.push.apply(data, Response.data);
-      if (page === 1) {
-        this.setState({
-          dataSource: data,
-          loadingFlag: false,
-        });
-      } else {
-        this.setState({
-          dataSource: data,
-          fetchFlag: false,
-          FooterText: '上拉加载',
-        });
-      }
-    });
+  async getNet(page = 1) {
+    const { data } = await rnk(page);
+    console.log(data);
+    let source = this.state.dataSource;
+    source.push.apply(source, data);
+    if (page === 1) {
+      this.setState({
+        dataSource: source,
+        loadingFlag: false,
+      });
+    } else {
+      this.setState({
+        dataSource: source,
+        fetchFlag: false,
+        FooterText: '上拉加载',
+      });
+    }
   }
 
   JmpToBook(nam) {
@@ -68,10 +91,6 @@ class RankScreen extends React.PureComponent {
         </View>
       </TouchableOpacity>
     );
-  }
-
-  _renderSeparator() {
-    return (<View style={styles.solid} />);
   }
 
   _keyExtractor = (item, index) => item.name;
@@ -105,7 +124,7 @@ class RankScreen extends React.PureComponent {
             }}
             data={this.state.dataSource}
             renderItem={this._renderRow}
-            ItemSeparatorComponent={this._renderSeparator}
+            ItemSeparatorComponent={() => <View style={styles.solid} />}
             getItemLayout={(data, index) => ({ length: 70, offset: 71 * index, index })}//行高38，分割线1，所以offset=39
             keyExtractor={this._keyExtractor}
             onEndReached={this._onEndReached}

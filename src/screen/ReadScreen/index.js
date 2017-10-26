@@ -188,7 +188,6 @@ class ReadScreen extends React.PureComponent {
 
   async getNet(index, direct) {
     index = (index <= this.chapterLst.length - 1 && index > -1 )   ? index : this.chapterLst.length - 1;
-    // index = index === -1 ? this.chapterLst.length - 1 : index;
     this.bookRecord.recordChapterNum = index;
     AsyncStorage.setItem(bookRecordFlag, JSON.stringify(this.bookRecord));  //因为每次翻页都在存储，所以觉得这里可以省略了
     let nurl = this.chapterLst[index].key;

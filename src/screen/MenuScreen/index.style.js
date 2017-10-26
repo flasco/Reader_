@@ -5,8 +5,8 @@ export default {
     height: window.height,
     backgroundColor: '#222222',
     padding: 10,
-},
-item: {
+  },
+  item: {
     fontSize: 15,
     fontWeight: '300',
     paddingTop: 10,
@@ -16,5 +16,5 @@ item: {
     marginRight: 10,
     color: '#EBEBEB',
     backgroundColor: '#2c2c2c'
-}
+  }
 }

@@ -7,7 +7,7 @@ import SideMenu from 'react-native-side-menu';
 import Swipeout from 'react-native-swipeout';
 
 import PullRefreshScrollView from '../../component/RefreshScollowView/index';
-import Menu from '../../component/slideMenu';
+import Menu from '../MenuScreen';
 import styles from './index.style';
 import getNet from '../../util/getNet';
 
