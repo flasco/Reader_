@@ -13,8 +13,14 @@ export default {
     padding: 8,
     height: 42,
     marginBottom: 7,
-    marginRight: 10,
     color: '#EBEBEB',
     backgroundColor: '#2c2c2c'
+  },
+  copyRight:{
+    position:'absolute',
+    bottom:10,
+    right:10,
+    textAlign:'center',
+    color:'#EBEBEB'
   }
 }

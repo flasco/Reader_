@@ -11,14 +11,13 @@ import Menu from '../MenuScreen';
 import styles from './index.style';
 import getNet from '../../util/getNet';
 
-
 let booklist, tht, tha, RefreshCount = 0;
 
 /**
  * 包装层，为了保证能使用侧滑的菜单
  - code by Czq
  */
-export default class BookPackage extends React.PureComponent {
+class BookPackage extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '古意流苏',
@@ -59,15 +58,14 @@ export default class BookPackage extends React.PureComponent {
   }
 
   componentDidMount() {
-
     setTimeout(() => {
       SplashScreen.hide();
     }, 2000);
-
   }
 
   _OpenMenu() {
-    this.setState({ isOpen: true });
+    const flag = this.state.isOpen;
+    this.setState({ isOpen: !flag });
   }
 
   updateMenuState(isOpen) {
@@ -251,3 +249,4 @@ class BookList extends React.PureComponent {
   }
 }
 
+export default BookPackage;

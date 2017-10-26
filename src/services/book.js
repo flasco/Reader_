@@ -24,3 +24,7 @@ export async function list(url) {
 export async function rnk(page) {
   return await axios.get(`${ServerIp}/rnklist?p=${page}`);
 }
+
+export async function stay(hour = 6) {
+  return await axios.get(`${ServerIp}/start?h=${hour}`);
+}

@@ -27,7 +27,7 @@ export default class NovelList extends React.PureComponent {
         <Button
           title='gDwn'
           onPress={() => {
-            that._FlatList.scrollToIndex({ viewPosition: 0.5, index: this.lengt });
+            that._FlatList.scrollToIndex({ viewPosition: 0.5, index: that.lengt });
           }}
           color='#fff'
         ></Button>
@@ -48,6 +48,7 @@ export default class NovelList extends React.PureComponent {
 
     this.state = {
       dataSource: '',
+      loadFlag: true,
       currentChapterNum: props.navigation.state.params.chap,
     };
   }
@@ -57,6 +58,7 @@ export default class NovelList extends React.PureComponent {
     this.lengt = booklist.length - 1;
     this.setState({
       dataSource: booklist,
+      loadFlag:false,
     }, () => {
       setTimeout(() => {
         that._FlatList.scrollToIndex({ viewPosition: 0.5, index: this.state.currentChapterNum });
@@ -87,18 +89,25 @@ export default class NovelList extends React.PureComponent {
   }
 
   render() {
-    return (
-      <View style={{ backgroundColor: '#D8D8D8', flex: 1 }}>
-        <FlatList
-          initialNumToRender={20}
-          ref={(c) => this._FlatList = c}
-          data={this.state.dataSource}
-          renderItem={this._renderItem}
-          ListHeaderComponent={this._header}
-          ItemSeparatorComponent={() => <View style={styles.solid} />}
-          getItemLayout={(data, index) => ({ length: 38, offset: 39 * index, index })}//行高38，分割线1，所以offset=39
-        />
-      </View>
-    );
+    if (!this.state.loadFlag) {
+      return (
+        <View style={{ backgroundColor: '#D8D8D8', flex: 1 }}>
+          <FlatList
+            initialNumToRender={20}
+            ref={(c) => this._FlatList = c}
+            data={this.state.dataSource}
+            renderItem={this._renderItem}
+            ListHeaderComponent={this._header}
+            ItemSeparatorComponent={() => <View style={styles.solid} />}
+            getItemLayout={(data, index) => ({ length: 38, offset: 39 * index, index })}//行高38，分割线1，所以offset=39
+          />
+        </View>
+      );
+    } else {
+      return (
+        <Text style={styles.welcome}>Loading now.please wait.</Text>
+      );
+    }
+
   }
 }
