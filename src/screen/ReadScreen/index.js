@@ -9,7 +9,7 @@ import Toast from '../../component/Toast';
 import ViewPager from '../../component/viewPager';
 import getContextArr from '../../util/getContextArr';
 import Navigat from '../../component/Navigat';
-import { content } from '../../services/book';
+import { content,list } from '../../services/book';
 
 import styles from './index.style';
 
@@ -26,7 +26,7 @@ let q = async.queue(function (url, callback) {
 q.drain = function () {
   tht.refs.toast.show(`Task finished at ${finishTask}/${allTask}`);
   finishTask = 0;
-  AsyncStorage.setItem(bookPlant,JSON.stringify(tht.chapterMap));
+  AsyncStorage.setItem(bookMapFlag, JSON.stringify(tht.chapterMap));
 };
 
 async function fetchList(nurl, callback) {
@@ -49,7 +49,7 @@ async function fetchList(nurl, callback) {
 
 let allTask = 0, finishTask = 0;
 
-let tht, bookPlant, booklist;
+let tht, bookMapFlag, bookRecordFlag, chapterLstFlag;
 
 const { height, width } = Dimensions.get('window');
 
@@ -60,8 +60,8 @@ class Readitems extends React.PureComponent {
         <Text style={[styles.title, this.props.SMode ? (styles.SunnyMode_Title) : (styles.MoonMode_Title)]}>{this.props.title}</Text>
         <Text style={[styles.textsize, this.props.SMode ? (styles.SunnyMode_text) : (styles.MoonMode_text)]} numberOfLines={21}>{this.props.data}</Text>
         <View style={styles.bottView}>
-          <Text style={[styles.bottom1, this.props.SMode ? (false) : (styles.MoonMode_Bottom)]}>{dateFormat(new Date(), 'H:MM')}</Text>
-          <Text style={[styles.bottom2, this.props.SMode ? (false) : (styles.MoonMode_Bottom)]} >{this.props.presPag}/{this.props.totalPage} </Text>
+          <Text style={[styles.bottom1, !this.props.SMode && (styles.MoonMode_Bottom)]}>{dateFormat(new Date(), 'H:MM')}</Text>
+          <Text style={[styles.bottom2, !this.props.SMode && (styles.MoonMode_Bottom)]} >{this.props.presPag}/{this.props.totalPage} </Text>
         </View>
       </View>
     );
@@ -73,9 +73,11 @@ class ReadScreen extends React.PureComponent {
     super(props);
     tht = this;
     totalPage = 0;//总的页数
-    this.chapterMap = new Map();
-    this.currentBook;
-    this.currentNum = props.navigation.state.params.bookNum;
+    this.chapterMap;
+    this.chapterLst;
+    this.bookRecord;
+    this.currentBook = props.navigation.state.params.book;
+
     this.state = {
       loadFlag: true, //判断是出于加载状态还是显示状态
       currentItem: '', //作为章节内容的主要获取来源。
@@ -95,52 +97,48 @@ class ReadScreen extends React.PureComponent {
     this.SModeChange = this.SModeChange.bind(this);
     this.getChapterUrl = this.getChapterUrl.bind(this);
     this.getCurrentPage = this.getCurrentPage.bind(this);
+    this.cacheLoad = this.cacheLoad.bind(this);
 
     this.initConf();
+
   }
   async initConf() {
-    const tm = await AsyncStorage.multiGet(['SMode', 'booklist']);
-    booklist = JSON.parse(tm[1][1]);
-    this.currentBook = booklist[this.currentNum];
+    bookRecordFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_record`;
+    chapterLstFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_list`;
+    bookMapFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_map`;
+
+    const tm = await AsyncStorage.multiGet(['SMode', bookRecordFlag, chapterLstFlag, bookMapFlag])
+    this.chapterLst = tm[2][1] !== null ? JSON.parse(tm[2][1]) : [];
+    this.chapterMap = tm[3][1] !== null ? JSON.parse(tm[3][1]) : new Map();
+    if(this.chapterLst.length !== 0){
+      this.bookRecord = tm[1][1] !== null ? JSON.parse(tm[1][1]) : { recordChapterNum: this.chapterLst.length - 1 > -1 ? this.chapterLst.length - 1 : 0 , recordPage: 1 };
+    }
+    
     this.setState({
       SMode: tm[0][1] ? JSON.parse(tm[0][1]) : true,
     });
-    bookPlant = `${this.currentBook.bookName}_${this.currentBook.plantformId}`;
-    const val_1 = JSON.parse(await AsyncStorage.getItem(bookPlant));
-    if (val_1 === null) {
-      await AsyncStorage.setItem(bookPlant, JSON.stringify(new Map()));
-    } else {
-      this.chapterMap = val_1;
+
+    if (this.chapterLst.length === 0) {
+      this.refs.toast.show('章节内容缺失，正在抓取中...');
+      this.chapterLst = await list(this.currentBook.url);
+      this.bookRecord =  { recordChapterNum: this.chapterLst.length - 1 , recordPage: 1 };
+      AsyncStorage.setItem(chapterLstFlag,JSON.stringify(this.chapterLst));
     }
-    if (this.currentBook.recordChapter === '') {
-      let bookChapterLst = `${this.currentBook.bookName}_${this.currentBook.plantformId}_list`;
-      const val_2 = JSON.parse(await AsyncStorage.getItem(bookChapterLst));
-      if (val_2 === null) {//没有获取章节列表的情况
-        this.refs.toast.show('请获取一遍章节列表再重新进入。');
-      } else {
-        this.currentBook.recordChapter = val_2[val_2.length - 1].key;
-      }
-    }
-    this.getNet(this.currentBook.recordChapter, 0);
-    booklist[this.currentNum].recordPage = 1;//修复进入章节后从目录进入新章节页数记录不正确的bug
+
+    this.getNet(this.bookRecord.recordChapterNum, 0);
+
+    this.bookRecord.recordPage = 1;    //修复进入章节后从目录进入新章节页数记录不正确的bug
   }
 
   async download_Chapter(size) {
-    let bookChapterLst = `${this.currentBook.bookName}_${this.currentBook.plantformId}_list`;
-    const val = JSON.parse(await AsyncStorage.getItem(bookChapterLst));
-    let ChaptUrl = booklist[this.currentNum].recordChapter;
-    let i = 0, j = val.length;
-    while (i < j) {
-      if (val[i].key === ChaptUrl) {
-        break;
-      }
-      i++;
-    }
-    let End = i >= size ? i - size : 0;
+    const i = this.bookRecord.recordChapterNum, j = this.chapterLst.length;
+
+    const End = i >= size ? i - size : 0;
     allTask = i - End;
     for (let n = End; n < i; n++) {
-      q.push(val[n].key);
+      q.push(this.chapterLst[n].key);
     }
+
   }
 
   showAlertSelected() {
@@ -176,20 +174,30 @@ class ReadScreen extends React.PureComponent {
     );
   }
 
-  async getNet(nurl, direct) {
-    booklist[this.currentNum].recordChapter = nurl;
-    AsyncStorage.setItem('booklist', JSON.stringify(booklist))
+  async cacheLoad(nurl) {
     if (this.chapterMap[nurl] === undefined) {
       try {
         const { data } = await content(nurl);
-        this.setState({
-          currentItem: data,
-          loadFlag: false,
-          goFlag: direct,
-        }, () => {
-          this.chapterMap[nurl] = data;
-          AsyncStorage.setItem(bookPlant, JSON.stringify(this.chapterMap))
-        });
+        this.chapterMap[nurl] = data;
+        await AsyncStorage.setItem(bookMapFlag, JSON.stringify(this.chapterMap));
+      } catch (err) {
+        this.refs.toast.show('fetch err');
+      }
+    }
+  }
+
+  async getNet(index, direct) {
+    index = (index <= this.chapterLst.length - 1 && index > -1 )   ? index : this.chapterLst.length - 1;
+    // index = index === -1 ? this.chapterLst.length - 1 : index;
+    this.bookRecord.recordChapterNum = index;
+    AsyncStorage.setItem(bookRecordFlag, JSON.stringify(this.bookRecord));  //因为每次翻页都在存储，所以觉得这里可以省略了
+    let nurl = this.chapterLst[index].key;
+
+    if (this.chapterMap[nurl] === undefined ) {
+      try {
+        const { data } = await content(nurl);
+        this.chapterMap[nurl] = data;
+        AsyncStorage.setItem(bookMapFlag, JSON.stringify(this.chapterMap));
       } catch (err) {
         let epp = { title: '网络连接超时啦啦啦啦啦', content: '网络连接超时.', prev: 'error', next: 'error' };
         this.setState({
@@ -197,19 +205,21 @@ class ReadScreen extends React.PureComponent {
           loadFlag: false,
           goFlag: direct,
         });
+        return;
       }
-    } else {
-      this.setState({
-        currentItem: this.chapterMap[nurl],
-        loadFlag: false,
-        goFlag: direct,
-      });
     }
+    this.setState({
+      currentItem: this.chapterMap[nurl],
+      loadFlag: false,
+      goFlag: direct,
+    });
+    this.cacheLoad(this.chapterMap[nurl].next);
   }
+
   getNextPage() {
-    if (tht.state.currentItem.next.indexOf('.html') !== -1) {//防止翻页越界
-      tht.setState({ loadFlag: true }, () => {
-        tht.getNet(tht.state.currentItem.next, 1);
+    if ( this.bookRecord.recordChapterNum > 0 ) {//防止翻页越界
+      this.setState({ loadFlag: true }, () => {
+        this.getNet(--this.bookRecord.recordChapterNum, 1);//因为是倒序的
       });
     } else {
       this.refs.toast.show('已经是最后一章。');
@@ -218,9 +228,9 @@ class ReadScreen extends React.PureComponent {
     return 0;
   }
   getPrevPage() {
-    if (tht.state.currentItem.prev.indexOf('.html') !== -1) {//防止翻页越界
-      tht.setState({ loadFlag: true }, () => {
-        tht.getNet(tht.state.currentItem.prev, -1);
+    if ( this.bookRecord.recordChapterNum < this.chapterLst.length - 1 ) {//防止翻页越界
+      this.setState({ loadFlag: true }, () => {
+        this.getNet(++this.bookRecord.recordChapterNum, -1);
       });
     } else {
       this.refs.toast.show('已经是第一章。');
@@ -252,19 +262,20 @@ class ReadScreen extends React.PureComponent {
       AsyncStorage.setItem('SMode', JSON.stringify(!s));
     });
   }
-  getChapterUrl(urln) {
-    let url = urln;
+
+  getChapterUrl(index) {
     this.setState({
       loadFlag: true,
       isVisible: false
     }, () => {
-      tht.getNet(url, 1);
+      tht.getNet(index, 1);
     });
   }
+
   getCurrentPage(pag) {
     pag = pag === 0 ? 1 : pag;
-    booklist[this.currentNum].recordPage = pag;
-    AsyncStorage.setItem('booklist', JSON.stringify(booklist));
+    this.bookRecord.recordPage = pag;
+    AsyncStorage.setItem(bookRecordFlag, JSON.stringify(this.bookRecord));
   }
 
   render() {
@@ -282,7 +293,7 @@ class ReadScreen extends React.PureComponent {
             choose={1}
           />}
         {this.state.loadFlag ? (
-          <Text style={[styles.centr, this.state.SMode ? (false) : (styles.MoonMode_text)]}>
+          <Text style={[styles.centr, !this.state.SMode && (styles.MoonMode_text)]}>
             Loading...</Text>) :
           (<ViewPager
             dataSource={ds.cloneWithPages(getContextArr(this.state.currentItem.content, width))}
@@ -291,16 +302,16 @@ class ReadScreen extends React.PureComponent {
             getPrevPage={this.getPrevPage}
             getCurrentPage={this.getCurrentPage}
             clickBoard={this.clickBoard}
-            initialPage={booklist[this.currentNum].recordPage - 1}
+            initialPage={this.bookRecord.recordPage - 1}
             locked={this.state.isVisible}
             Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />
         {this.state.isVisible &&
           <Navigat
             urlx={this.currentBook.url}
-            currentChapter={this.currentBook.recordChapter}
+            currentChapter={this.bookRecord.recordChapterNum}
             bname={this.currentBook.bookName}
-            bookChapterLst={`${this.currentBook.bookName}_${this.currentBook.plantformId}_list`}
+            bookChapterLst={this.chapterLst}
             getChapterUrl={this.getChapterUrl}
             navigation={this.props.navigation}
             showAlertSelected={this.showAlertSelected}

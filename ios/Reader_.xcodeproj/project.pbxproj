@@ -1283,7 +1283,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = czq.flasco.Reader;
+				PRODUCT_BUNDLE_IDENTIFIER = "czq.flasco.Reader-";
 				PRODUCT_NAME = Reader_;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1310,7 +1310,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = czq.flasco.Reader;
+				PRODUCT_BUNDLE_IDENTIFIER = "czq.flasco.Reader-";
 				PRODUCT_NAME = Reader_;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";

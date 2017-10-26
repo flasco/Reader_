@@ -145,19 +145,13 @@ class BookList extends React.PureComponent {
           bookName: '美食供应商',
           author: '菜猫',
           url: 'http://www.biqiuge.com/book/6888/',
-          recordNum: 0,
-          recordChapter: '',
           latestChapter: '待检测',
-          recordPage: 1,
           plantformId: 5
         }, {
           bookName: '飞剑问道',
           author: '我吃西红柿',
           url: 'http://www.biqiuge.com/book/24277/',
-          recordNum: 0,
-          recordChapter: '',
           latestChapter: '待检测',
-          recordPage: 1,
           plantformId: 5
         }
       ];
@@ -206,17 +200,13 @@ class BookList extends React.PureComponent {
         <TouchableOpacity
           onPress={() => {
             navigate('Read', {
-              bookNum: booklist.indexOf(rowData)
+              book: rowData
             });
           }}>
-          <View style={{
-            height: 52
-          }}>
+          <View style={{ height: 52 }}>
             <Text style={styles.rowStyle}>
-              <Text style={{
-                fontSize: 15
-              }}>{rowData.bookName}</Text>
-              <Text style={styles.latestChapter}>{`    ${rowData.latestChapter}`}</Text>
+              <Text style={{ fontSize: 15 }}>{rowData.bookName}</Text>
+              <Text style={styles.latestChapter}>{`    ${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}</Text>
             </Text>
           </View>
         </TouchableOpacity>
@@ -244,20 +234,20 @@ class BookList extends React.PureComponent {
   }
 
   render() {
-    return (this.state.load? (false): (
-        <View style={styles.container}>
-          <ListView
-            style={{
-              flex: 1
-            }}
-            renderScrollComponent={(props) => <PullRefreshScrollView
-              onRefresh={(PullRefresh) => this.onRefresh(PullRefresh)}
-              {...props} />}
-            dataSource={this.state.dataSource}
-            renderSeparator={this.renderSeparator}
-            renderRow={this.renderRow} />
-        </View>
-      ));
+    return (this.state.load ? (false) : (
+      <View style={styles.container}>
+        <ListView
+          style={{
+            flex: 1
+          }}
+          renderScrollComponent={(props) => <PullRefreshScrollView
+            onRefresh={(PullRefresh) => this.onRefresh(PullRefresh)}
+            {...props} />}
+          dataSource={this.state.dataSource}
+          renderSeparator={this.renderSeparator}
+          renderRow={this.renderRow} />
+      </View>
+    ));
   }
 }
 

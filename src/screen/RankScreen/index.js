@@ -78,7 +78,6 @@ class RankScreen extends React.PureComponent {
 
   _onEndReached() {
     if (this.state.fetchFlag === true) return;
-    // console.log('End...reach, start fetch..');
     this.setState({
       FooterText: '正在加载中...',
       fetchFlag: true,

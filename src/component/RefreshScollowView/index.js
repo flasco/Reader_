@@ -34,14 +34,9 @@ export default class PullRefreshScrollView extends Component {
             prArrowDeg:new Animated.Value(0),
             lmState:0
         };
-
-
         this.base64Icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAABQBAMAAAD8TNiNAAAAJ1BMVEUAAACqqqplZWVnZ2doaGhqampoaGhpaWlnZ2dmZmZlZWVmZmZnZ2duD78kAAAADHRSTlMAA6CYqZOlnI+Kg/B86E+1AAAAhklEQVQ4y+2LvQ3CQAxGLSHEBSg8AAX0jECTnhFosgcjZKr8StE3VHz5EkeRMkF0rzk/P58k9rgOW78j+TE99OoeKpEbCvcPVDJ0OvsJ9bQs6Jxs26h5HCrlr9w8vi8zHphfmI0fcvO/ZXJG8wDzcvDFO2Y/AJj9ADE7gXmlxFMIyVpJ7DECzC9J2EC2ECAAAAAASUVORK5CYII=';
         this.dragFlag = false; //scrollview是否处于拖动状态的标志
         this.prStoryKey = 'prtimekey';
-
-
-
     }
     // 滚动触发
     onScroll(e){
@@ -141,9 +136,7 @@ export default class PullRefreshScrollView extends Component {
           this.lastContentHeight = contentSize.height;
           this.props.onLoadMore(this);
         }
-        
       }
-      
     }
     onLoadMoreEnd(target){
       this.setState({
@@ -173,19 +166,13 @@ export default class PullRefreshScrollView extends Component {
     componentDidMount(){
 
         AsyncStorage.getItem(this.prStoryKey, (error, result) => {
-
-
             if (result) {
                 result = parseInt(result);
-
                 //将时间传入下拉刷新的state
                 this.setState({
                   prTimeDisplay:dateFormat(new Date(result),'yyyy-MM-dd hh:mm'),
                 });
-
             }
-
-
         });
     }
     renderNormalContent(){

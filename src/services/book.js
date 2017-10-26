@@ -8,7 +8,17 @@ export async function content(url) {
 }
 
 export async function list(url) {
-  return await axios.get(`${ServerIp}/Analy_x?action=1&url=${url}`);
+  let { data } = await axios.get(`${ServerIp}/Analy_x?action=1&url=${url}`);
+  let n = [],i = 0;
+  data = data.reverse();
+  while (i < data.length) {
+    n.push({
+      key: data[i].url,
+      title: (data[i].title.length > 25 ? data[i].title.substr(0, 18) + '...' : data[i].title)
+    });
+    i++;
+  }
+  return n;
 }
 
 export async function rnk(page) {
