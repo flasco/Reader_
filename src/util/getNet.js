@@ -24,7 +24,7 @@ export default class getNet {
 
   static async get(url, bookChapterLst, latech, callback) {
     const data = await list(url);
-    let tit = data[0].title;
+    let tit = data[data.length-1].title;
     callback(tit);
     if (tit === latech) {
       return;

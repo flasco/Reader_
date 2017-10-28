@@ -111,7 +111,7 @@ class ReadScreen extends React.PureComponent {
     this.chapterLst = tm[2][1] !== null ? JSON.parse(tm[2][1]) : [];
     this.chapterMap = tm[3][1] !== null ? JSON.parse(tm[3][1]) : new Map();
     if(this.chapterLst.length !== 0){
-      this.bookRecord = tm[1][1] !== null ? JSON.parse(tm[1][1]) : { recordChapterNum: this.chapterLst.length - 1 > -1 ? this.chapterLst.length - 1 : 0 , recordPage: 1 };
+      this.bookRecord = tm[1][1] !== null ? JSON.parse(tm[1][1]) : { recordChapterNum: 0 , recordPage: 1 };
     }
     
     this.setState({
@@ -121,7 +121,7 @@ class ReadScreen extends React.PureComponent {
     if (this.chapterLst.length === 0) {
       this.refs.toast.show('章节内容缺失，正在抓取中...');
       this.chapterLst = await list(this.currentBook.url);
-      this.bookRecord =  { recordChapterNum: this.chapterLst.length - 1 , recordPage: 1 };
+      this.bookRecord =  { recordChapterNum: 0 , recordPage: 1 };
       AsyncStorage.setItem(chapterLstFlag,JSON.stringify(this.chapterLst));
     }
 
@@ -216,9 +216,9 @@ class ReadScreen extends React.PureComponent {
   }
 
   getNextPage() {
-    if ( this.bookRecord.recordChapterNum > 0 ) {//防止翻页越界
+    if ( this.bookRecord.recordChapterNum < this.chapterLst.length - 1 ) {//防止翻页越界
       this.setState({ loadFlag: true }, () => {
-        this.getNet(--this.bookRecord.recordChapterNum, 1);//因为是倒序的
+        this.getNet(++this.bookRecord.recordChapterNum, 1);//因为是倒序的
       });
     } else {
       this.refs.toast.show('已经是最后一章。');
@@ -227,9 +227,10 @@ class ReadScreen extends React.PureComponent {
     return 0;
   }
   getPrevPage() {
-    if ( this.bookRecord.recordChapterNum < this.chapterLst.length - 1 ) {//防止翻页越界
+    // alert(this.bookRecord.recordChapterNum);
+    if ( this.bookRecord.recordChapterNum > 0 ) {//防止翻页越界
       this.setState({ loadFlag: true }, () => {
-        this.getNet(++this.bookRecord.recordChapterNum, -1);
+        this.getNet(--this.bookRecord.recordChapterNum, -1);
       });
     } else {
       this.refs.toast.show('已经是第一章。');

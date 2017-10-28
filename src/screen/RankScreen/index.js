@@ -52,9 +52,9 @@ class RankScreen extends React.PureComponent {
 
   async getNet(page = 1) {
     const { data } = await rnk(page);
-    console.log(data);
     let source = this.state.dataSource;
-    source.push.apply(source, data);
+    source.push(...data);
+    // source.push.apply(source, data);
     if (page === 1) {
       this.setState({
         dataSource: source,

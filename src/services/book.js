@@ -10,7 +10,6 @@ export async function content(url) {
 export async function list(url) {
   let { data } = await axios.get(`${ServerIp}/Analy_x?action=1&url=${url}`);
   let n = [],i = 0;
-  data = data.reverse();
   while (i < data.length) {
     n.push({
       key: data[i].url,
