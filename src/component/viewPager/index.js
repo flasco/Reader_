@@ -1,4 +1,4 @@
-import React,{ PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import {
   Dimensions,
   View,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import StaticRenderer from 'react-native/Libraries/Components/StaticRenderer';
-import  ViewPagerDataSource from './ViewPagerDataSource';
+import ViewPagerDataSource from './ViewPagerDataSource';
 
 //私人定制
 const deviceWidth = Dimensions.get('window').width;
@@ -17,14 +17,14 @@ const LeftBoundary = deviceWidth / 4;
 const RightBoundary = deviceWidth - LeftBoundary;
 let Shield = 0;//修复呼出菜单之后下一次滑页出现bug
 
-class ViewPager extends PureComponent{
-  static DataSource =  ViewPagerDataSource;
-  constructor(props){
+class ViewPager extends PureComponent {
+  static DataSource = ViewPagerDataSource;
+  constructor(props) {
     super(props);
     this.fling = false;
     this.isLoop = false;
     this.locked = false;
-    this.animation = (animate, toValue, gs) =>{
+    this.animation = (animate, toValue, gs) => {
       return Animated.timing(animate,
         {
           toValue: toValue,
@@ -35,7 +35,7 @@ class ViewPager extends PureComponent{
     };
     let maxP;
     this.state = {
-      toprev:0,
+      toprev: 0,
       currentPage: 0,
       viewWidth: 0,
       scrollValue: new Animated.Value(0)
@@ -61,26 +61,26 @@ class ViewPager extends PureComponent{
        */
       let clickX = gestureState.x0;
       let moveX = gestureState.dx;
-      let flag = gestureState.moveX === 0 ? 0 : ( gestureState.moveX > gestureState.x0 ? -1 : 1 ) ;
+      let flag = gestureState.moveX === 0 ? 0 : (gestureState.moveX > gestureState.x0 ? -1 : 1);
 
-      if( clickX> LeftBoundary && clickX< RightBoundary  && moveX ==0){
-        this.props.clickBoard();//可以在这里做文章，在打开菜单的时候屏蔽一切滑动操作
+      if (clickX > LeftBoundary && clickX < RightBoundary && moveX == 0) {
+        this.props.clickBoard();
         Shield++;
-        return ;
+        return;
       }
 
-      if(this.props.locked) return false;
-      if(clickX> RightBoundary && moveX == 0 || flag === 1){
+      if (this.props.locked) return false;
+      if (clickX > RightBoundary && moveX == 0 || flag === 1) {
         this.props.hasTouch && this.props.hasTouch(false);
-        this.setState({toprev:0},()=>{
-          this.movePage(1, gestureState,moveX !== 0);//moveX !== 0 这里是判断是否启用动画效果
-          return ;
+        this.setState({ toprev: 0 }, () => {
+          this.movePage(1, gestureState, moveX !== 0);//moveX !== 0 这里是判断是否启用动画效果
+          return;
         });
-      }else if(clickX< LeftBoundary && moveX == 0 || flag === -1){
+      } else if (clickX < LeftBoundary && moveX == 0 || flag === -1) {
         this.props.hasTouch && this.props.hasTouch(false);
-        this.setState({toprev:1},()=>{
-          this.movePage(-1, gestureState,moveX !== 0);
-          return ;
+        this.setState({ toprev: 1 }, () => {
+          this.movePage(-1, gestureState, moveX !== 0);
+          return;
         });
       }
 
@@ -89,7 +89,7 @@ class ViewPager extends PureComponent{
       this.movePage(step, gestureState);
     };
 
-    
+
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
       // Claim responder if it's a horizontal pan
@@ -107,13 +107,13 @@ class ViewPager extends PureComponent{
 
       // Touch is released, scroll to the one that you're closest to
       onPanResponderRelease: release,
-      
+
       onPanResponderTerminate: release,
-      
+
       // Dragging, move the view with the touch
       onPanResponderMove: (e, gestureState) => {
-        if(this.props.locked) return false;
-        if(Shield>=2){
+        if (this.props.locked) return false;
+        if (Shield >= 2) {
           return;
         }
         let dx = gestureState.dx;
@@ -136,13 +136,11 @@ class ViewPager extends PureComponent{
   }
 
   componentDidMount() {
-    // console.log(this.props.dataSource);
     //私人修改
-    // console.log('nextProps.Gpag:'+this.props.Gpag);
-    if(this.props.Gpag==1){
+    if (this.props.Gpag == 1) {
       this.goToPage(0, false);
-    }else if(this.props.Gpag==-1){
-      this.goToPage(this.maxP-1, false);
+    } else if (this.props.Gpag == -1) {
+      this.goToPage(this.maxP - 1, false);
     }
   }
 
@@ -164,7 +162,7 @@ class ViewPager extends PureComponent{
   }
 
   goToPage(pageNumber, animate = true) {
-    
+
     let pageCount = this.maxP;
     if (pageNumber < 0 || pageNumber > pageCount) {
       return;
@@ -176,25 +174,23 @@ class ViewPager extends PureComponent{
 
   movePage(step, gs, animate = true) {
     let pageCount = this.maxP;
-    // console.log('...'+ pageCount)
     let pageNumber = this.state.currentPage + step;
-    
+
 
     //私人修改
-    if(pageNumber>=pageCount&&this.state.toprev==0){
+    if (pageNumber >= pageCount && this.state.toprev == 0) {
       let tmpag = pageNumber;
       pageNumber = 0;
-      if(this.props.getNextPage()===-1){
-        pageNumber = tmpag-1;
+      if (this.props.getNextPage() === -1) {
+        pageNumber = tmpag - 1;
       }
-      this.props.getCurrentPage(pageNumber+1);
-      // console.log(pageNumber)
+      this.props.getCurrentPage(pageNumber + 1);
       return;
-    }else if(pageNumber<0&&this.state.toprev==1){
+    } else if (pageNumber < 0 && this.state.toprev == 1) {
       this.props.getPrevPage();
-      return ;
+      return;
     }
-    step !== 0 && this.props.getCurrentPage(pageNumber+1);
+    step !== 0 && this.props.getCurrentPage(pageNumber + 1);
     if (this.props.isLoop) {
       pageNumber = pageCount == 0 ? pageNumber = 0 : ((pageNumber + pageCount) % pageCount);
     } else {
@@ -231,7 +227,7 @@ class ViewPager extends PureComponent{
     return this.state.currentPage;
   }
 
-  _getPage(pageIdx, loop = false ) {
+  _getPage(pageIdx, loop = false) {
     let dataSource = this.props.dataSource;
     let pageID = dataSource.pageIdentities[pageIdx];
     return (
@@ -258,7 +254,7 @@ class ViewPager extends PureComponent{
     let hasLeft = false;
     let viewWidth = this.state.viewWidth;
 
-    if(pageIDs.length > 0 && viewWidth > 0) {
+    if (pageIDs.length > 0 && viewWidth > 0) {
       // left page
       if (this.state.currentPage > 0) {
         bodyComponents.push(this._getPage(this.state.currentPage - 1));
@@ -295,7 +291,7 @@ class ViewPager extends PureComponent{
     });
 
     return (
-      <View style={{flex: 1}}
+      <View style={{ flex: 1 }}
         onLayout={(event) => {
           let viewWidth = event.nativeEvent.layout.width;
           if (!viewWidth || this.state.viewWidth === viewWidth) {
@@ -307,7 +303,7 @@ class ViewPager extends PureComponent{
           });
         }}
       >
-        <Animated.View style={[sceneContainerStyle, {transform: [{translateX}]}]}
+        <Animated.View style={[sceneContainerStyle, { transform: [{ translateX }] }]}
           {...this._panResponder.panHandlers}>
           {bodyComponents}
         </Animated.View>

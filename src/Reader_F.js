@@ -5,24 +5,20 @@ import {
 } from 'react-native';
 
 import BookListScreen from './screen/BookListScreen';
-
 import CatalogScreen from './screen/CatalogScreen';
 import ReadScreen from './screen/ReadScreen';
-
 import SearchScreen from './screen/SearchScreen';
 import RankScreen from './screen/RankScreen'
+import BookDetScreen from './screen/BookDetScreen';
 
 import { StackNavigator } from 'react-navigation';
-
-// import DeviceStorage from './util/DeviceStorage';
 import axios from 'axios';
 
 global.axios = axios;
-// global.DeviceStorage = DeviceStorage;
 
-SearchScreen.navigationOptions = ({navigation}) => {
+SearchScreen.navigationOptions = ({ navigation }) => {
   return {
-    header:null,
+    header: null,
   };
 };
 
@@ -37,6 +33,7 @@ const Reader_F = StackNavigator({
   Read: { screen: ReadScreen },
   Sear: { screen: SearchScreen },
   RnkL: { screen: RankScreen },
+  BookDet: { screen: BookDetScreen },
 }, {
     mode: 'modal',
     navigationOptions: {
@@ -44,5 +41,5 @@ const Reader_F = StackNavigator({
     }
   });
 
-  export default Reader_F;
+export default Reader_F;
 

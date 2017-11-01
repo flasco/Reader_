@@ -9,7 +9,7 @@ export async function content(url) {
 
 export async function list(url) {
   let { data } = await axios.get(`${ServerIp}/Analy_x?action=1&url=${url}`);
-  let n = [],i = 0;
+  let n = [], i = 0;
   while (i < data.length) {
     n.push({
       key: data[i].url,
@@ -26,4 +26,8 @@ export async function rnk(page) {
 
 export async function stay(hour = 6) {
   return await axios.get(`${ServerIp}/start?h=${hour}`);
+}
+
+export async function search(text) {
+  return await axios.get(`${ServerIp}/sear?name=${text}`);
 }

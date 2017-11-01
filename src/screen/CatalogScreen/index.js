@@ -7,7 +7,7 @@ import { HeaderBackButton } from 'react-navigation';
 
 import styles from './index.style';
 
-export default class NovelList extends React.PureComponent {
+class CatalogScreen extends React.PureComponent {
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -58,7 +58,7 @@ export default class NovelList extends React.PureComponent {
     this.lengt = booklist.length - 1;
     this.setState({
       dataSource: booklist,
-      loadFlag:false,
+      loadFlag: false,
     }, () => {
       setTimeout(() => {
         that._FlatList.scrollToIndex({ viewPosition: 0.5, index: this.state.currentChapterNum });
@@ -108,6 +108,7 @@ export default class NovelList extends React.PureComponent {
         <Text style={styles.welcome}>Loading now.please wait.</Text>
       );
     }
-
   }
 }
+
+export default CatalogScreen;

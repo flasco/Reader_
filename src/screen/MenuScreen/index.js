@@ -42,9 +42,9 @@ class Menu extends React.PureComponent {
         <TouchableOpacity onPress={this.CleanData}>
           <Text style={styles.item} >CleanAllData</Text>
         </TouchableOpacity>
-        <Text style={styles.copyRight} onPress={()=>{
+        <Text style={styles.copyRight} onPress={() => {
           Linking.openURL('https://github.com/flasco');
-        }}>Flasco CopyRight</Text>
+        }}>Start at Wed</Text>
       </View>
     );
   }

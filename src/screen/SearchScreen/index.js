@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { SearchBar, Button } from 'react-native-elements';
 import styles from './index.style';
 
+import { search } from '../../services/book';
+
 var UrlId = [
   '23us',
   'qidian',
@@ -44,35 +46,28 @@ class SearchScreen extends React.PureComponent {
     }
   }
 
-  SearchBook(text) {
-    let url = `https://testdb.leanapp.cn/sear?name=${text}`;
-    axios.get(url, { timeout: 5000 }).then(Response => {
-      let data = Response.data;
-      if (data === 'error...') {
-        this.setState({
-          dataSource: '',
-          hint: '无相关搜索结果。'
-        });
-      } else {
-        this.setState({
-          dataSource: data,
-          hint: `搜索到${data.length}条相关数据。`
-        });
-      }
-    });
+  async SearchBook(text) {
+    let { data } = await search(text);
+    console.log(data);
+    if (data === 'error...') {
+      this.setState({
+        dataSource: '',
+        hint: '无相关搜索结果。'
+      });
+    } else {
+      this.setState({
+        dataSource: data,
+        hint: `搜索到${data.length}条相关数据。`
+      });
+    }
   }
 
   _pressFunc(rowData) {
-    AlertIOS.alert('提示', `你要把[${rowData.name}]添加到书架中吗？`, [
-      {
-        text: '取消',
-        onPress: () => { }
-      },
-      {
-        text: '确认',
-        onPress: () => this.props.navigation.state.params.addBook(rowData)
-      },
-    ]);
+    const { navigate } = this.props.navigation;
+    navigate('BookDet', {
+      book: rowData,
+      addBook: this.props.navigation.state.params.addBook
+    });
   }
 
   _renderRow(item) {
@@ -85,7 +80,7 @@ class SearchScreen extends React.PureComponent {
           height: 52
         }}>
           <Text style={styles.rowStyle}>
-            {`${rowData.name} - ${rowData.author}   ${UrlId[rowData.plantFormId - 1]}`}
+            {`${rowData.bookName} - ${rowData.author}   ${UrlId[rowData.plantformId - 1]}`}
           </Text>
         </View>
       </TouchableOpacity>

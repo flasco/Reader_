@@ -74,14 +74,13 @@ class BookPackage extends React.PureComponent {
 
   _addBook(data) {
     let book = {
-      bookName: data.name,
+      bookName: data.bookName,
       author: data.author,
       url: data.url,
-      recordNum: 0,
-      recordChapter: '',
+      img: data.img,
+      desc: data.desc,
       latestChapter: '待检测',
-      recordPage: 1,
-      plantformId: data.plantFormId,
+      plantformId: data.plantformId,
     };
     console.log(data);
     booklist.push(book);
@@ -144,13 +143,17 @@ class BookList extends React.PureComponent {
           author: '菜猫',
           url: 'http://www.biqiuge.com/book/6888/',
           latestChapter: '待检测',
+          img: 'http://www.xs.la/BookFiles/BookImages/meishigongyingshang.jpg',
+          desc: '这是一个关于吃货的故事。',
           plantformId: 5
         }, {
           bookName: '飞剑问道',
           author: '我吃西红柿',
-          url: 'http://www.biqiuge.com/book/24277/',
+          url: 'http://www.xs.la/34_34495/',
           latestChapter: '待检测',
-          plantformId: 5
+          img: 'http://www.xs.la/BookFiles/BookImages/feijianwendao.jpg',
+          desc: '这是一个关于飞剑的故事。',
+          plantformId: 8
         }
       ];
       alert('发现书架为空，自动添加书籍。');
@@ -196,6 +199,11 @@ class BookList extends React.PureComponent {
         close={!(this.state.sectionID === sectionID && this.state.rowID === rowID)}
         backgroundColor={'#F5FCFF'}>
         <TouchableOpacity
+          onLongPress={() => {
+            navigate('BookDet', {
+              book: rowData
+            });
+          }}
           onPress={() => {
             navigate('Read', {
               book: rowData

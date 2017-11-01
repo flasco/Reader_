@@ -16,11 +16,11 @@ export default {
     color: '#EBEBEB',
     backgroundColor: '#2c2c2c'
   },
-  copyRight:{
-    position:'absolute',
-    bottom:10,
-    right:10,
-    textAlign:'center',
-    color:'#EBEBEB'
+  copyRight: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    textAlign: 'center',
+    color: '#EBEBEB'
   }
 }
