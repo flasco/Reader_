@@ -133,12 +133,11 @@ class ReadScreen extends React.PureComponent {
   async download_Chapter(size) {
     const i = this.bookRecord.recordChapterNum, j = this.chapterLst.length;
 
-    const End = i >= size ? i - size : 0;
-    allTask = i - End;
-    for (let n = End; n < i; n++) {
+    const End = i+size < j? i+size:j;
+    allTask = End - i;
+    for (let n = i; n < End; n++) {
       q.push(this.chapterLst[n].key);
     }
-
   }
 
   showAlertSelected() {

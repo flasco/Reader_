@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, AsyncStorage, Image } from 'react-native';
-import urlTool from 'url';
 
 import { HeaderBackButton } from 'react-navigation';
 import { Button } from 'react-native-elements';
@@ -47,10 +46,6 @@ class BookDetScreen extends React.PureComponent {
 
   }
 
-  componentDidMount() {
-
-  }
-
   render() {
     const { navigate } = this.props.navigation;
     return (
@@ -89,9 +84,7 @@ class BookDetScreen extends React.PureComponent {
         <Toast ref="toast" />
       </View>
     );
-
   }
 }
-
 
 export default BookDetScreen;

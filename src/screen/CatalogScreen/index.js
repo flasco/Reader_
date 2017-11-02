@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Button, AsyncStorage } from 'react-native';
-import urlTool from 'url';
 
 import { list } from '../../services/book';
 import { HeaderBackButton } from 'react-navigation';
