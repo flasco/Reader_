@@ -8,14 +8,8 @@ import styles from './index.style';
 import { search } from '../../services/book';
 
 var UrlId = [
-  '23us',
-  'qidian',
   'xs.la',
-  'luoqiu',
-  'biqiuge',
   'kanshuz',
-  'qu.la',
-  'xs.la',
 ];
 
 class SearchScreen extends React.PureComponent {

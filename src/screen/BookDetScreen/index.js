@@ -9,14 +9,8 @@ import Toast from '../../component/Toast';
 import styles from './index.style';
 
 let selecter = [
-  '23us',
-  'qidian',
   'xs.la',
-  'luoqiu',
-  'biqiuge',
   'kanshuz',
-  'qu.la',
-  'xs.la',
 ];
 
 class BookDetScreen extends React.PureComponent {
