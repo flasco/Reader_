@@ -15,11 +15,12 @@ import {
 } from 'react-native';
 
 import ScrollableMixin from './ScrollableMixin';
-
+let colorX;
 export default class PullRefreshScrollView extends Component {
   constructor(props) {
     super(props);
     // = this.scrollView;
+    colorX = this.props.color;
     this.refreshedText = props.refreshedText;
     this.refreshingText = props.refreshingText;
     this.refreshText = props.refreshText;
@@ -441,19 +442,19 @@ const styles = StyleSheet.create({
     backfaceVisibility: 'hidden',
     right: 0,
     height: 70,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: colorX,
     alignItems: 'center',
     justifyContent: 'flex-end'
   },
   loadMore: {
     height: 35,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: colorX,
     alignItems: 'center',
     justifyContent: 'center'
   },
   text: {
     height: 70,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: colorX,
   },
   prText: {
     marginBottom: 4,

@@ -1,7 +1,7 @@
 export default {
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF'
+    backgroundColor: '#ddd'
   },
   rowStyle: {
     marginTop: 18,

@@ -15,7 +15,7 @@ class RankScreen extends React.PureComponent {
       headerLeft: (
         <HeaderBackButton
           title='返回'
-          tintColor={'#fff'}
+          tintColor={'#ddd'}
           onPress={() => {
             navigation.goBack();
           }} />
@@ -24,7 +24,7 @@ class RankScreen extends React.PureComponent {
         backgroundColor: '#000'
       },
       headerTitleStyle: {
-        color: '#fff',
+        color: '#ddd',
         alignSelf: 'center'
       }
     };

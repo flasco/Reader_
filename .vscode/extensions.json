@@ -1,0 +1,20 @@
+{
+	// See http://go.microsoft.com/fwlink/?LinkId=827846
+	// for the documentation about the extensions.json format
+	"recommendations": [
+		// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "EQuimper.react-native-react-redux",
+    "vsmobile.vscode-react-native",
+    "robertohuertasm.vscode-icons",
+    "formulahendry.code-runner",
+    "2gua.rainbow-brackets",
+    "abusaidm.html-snippets",
+    "ecmel.vscode-html-css",
+    "naumovs.color-highlight",
+    "xabikos.JavaScriptSnippets"
+	]
+}

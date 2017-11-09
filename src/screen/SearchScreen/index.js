@@ -95,7 +95,7 @@ class SearchScreen extends React.PureComponent {
           <SearchBar
             onChangeText={(text) => this.setState({ text })}
             containerStyle={{ backgroundColor: '#000', flex: 7 }}
-            inputStyle={{ backgroundColor: '#fff' }}
+            inputStyle={{ backgroundColor: '#ddd' }}
             returnKeyType={'search'}
             autoCorrect={false}
             icon={{ color: '#86939e', name: 'search' }}

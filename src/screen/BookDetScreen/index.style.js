@@ -1,14 +1,14 @@
 export default {
   solid: {
     height: 1,
-    backgroundColor: '#dfdfdf',
+    backgroundColor: '#999',
     marginLeft: 15,
     marginRight: 15,
     marginTop: 8,
     marginBottom: 8,
   },
   container: {
-    flex: 1, backgroundColor: `#F5FCFF`,
+    flex: 1, backgroundColor: `#ddd`,
   },
 
   firstView: {
@@ -33,13 +33,14 @@ export default {
       }
     },
     secondButton: {
+      text: { color: '#ddd' },
       buttonStyle: {
         backgroundColor: '#dd0007', borderRadius: 4, width: 160, height: 40
       }
     }
   },
   Desc: {
-    marginLeft: 20, marginBottom: 6, marginTop: 6
+    marginLeft: 20, marginBottom: 6, marginTop: 6,
+    marginRight: 20,
   }
-
 }

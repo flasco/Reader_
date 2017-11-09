@@ -20,7 +20,7 @@ class BookDetScreen extends React.PureComponent {
       headerLeft: (
         <HeaderBackButton
           title='返回'
-          tintColor={'#fff'}
+          tintColor={'#ddd'}
           onPress={() => {
             navigation.goBack();
           }} />
@@ -29,7 +29,7 @@ class BookDetScreen extends React.PureComponent {
         backgroundColor: '#000'
       },
       headerTitleStyle: {
-        color: '#fff',
+        color: '#ddd',
         alignSelf: 'center'
       }
     };
@@ -69,12 +69,13 @@ class BookDetScreen extends React.PureComponent {
                 book: this.book
               });
             }}
+            textStyle={styles.secondView.secondButton.text}
             buttonStyle={styles.secondView.secondButton.buttonStyle} />
         </View>
         <View style={styles.solid} />
         <Text style={styles.Desc}>{this.book.desc}</Text>
         <View style={styles.solid} />
-        <Text style={styles.Desc}>内容待续。</Text>
+        <Text style={[styles.Desc,{textAlign:'center'}]}>To be continued...</Text>
         <Toast ref="toast" />
       </View>
     );

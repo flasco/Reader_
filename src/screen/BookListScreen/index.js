@@ -32,7 +32,7 @@ class BookPackage extends React.PureComponent {
           <Icon
             name='ios-add'
             type='ionicon'
-            color='#fff'
+            color='#ddd'
             size={42}
             iconStyle={{
               marginRight: 15
@@ -40,7 +40,7 @@ class BookPackage extends React.PureComponent {
         </TouchableOpacity>
       ),
       headerTitleStyle: {
-        color: '#fff',
+        color: '#ddd',
         alignSelf: 'center'
       }
     };
@@ -197,7 +197,7 @@ class BookList extends React.PureComponent {
         autoClose={true}
         sectionID={sectionID}
         close={!(this.state.sectionID === sectionID && this.state.rowID === rowID)}
-        backgroundColor={'#F5FCFF'}>
+        backgroundColor={styles.container.backgroundColor}>
         <TouchableOpacity
           onLongPress={() => {
             navigate('BookDet', {
@@ -248,6 +248,7 @@ class BookList extends React.PureComponent {
           }}
           renderScrollComponent={(props) => <PullRefreshScrollView
             onRefresh={(PullRefresh) => this.onRefresh(PullRefresh)}
+            color={styles.container.backgroundColor}
             {...props} />}
           dataSource={this.state.dataSource}
           renderSeparator={this.renderSeparator}

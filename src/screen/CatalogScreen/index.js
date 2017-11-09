@@ -14,7 +14,7 @@ class CatalogScreen extends React.PureComponent {
       headerLeft: (
         <HeaderBackButton
           title='返回'
-          tintColor={'#fff'}
+          tintColor={'#ddd'}
           onPress={() => {
             navigation.goBack();
           }} />
@@ -28,11 +28,11 @@ class CatalogScreen extends React.PureComponent {
           onPress={() => {
             that._FlatList.scrollToIndex({ viewPosition: 0.5, index: that.lengt });
           }}
-          color='#fff'
+          color='#ddd'
         ></Button>
       ),
       headerTitleStyle: {
-        color: '#fff',
+        color: '#ddd',
         alignSelf: 'center'
       }
     };
