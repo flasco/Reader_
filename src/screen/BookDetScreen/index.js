@@ -54,9 +54,13 @@ class BookDetScreen extends React.PureComponent {
         author = this.props.navigation.state.params.bookAut;
       const { data } = await search(name, author, 1);
       this.book = data[0];
-      this.setState({
-        isLoading: false,
-      })
+      if(this.book === undefined){
+        alert('本书没有记录！如果迫切需要加入本书，请及时反馈给开发人员~');
+      }else{
+        this.setState({
+          isLoading: false,
+        })
+      }
     }
   }
 
@@ -69,6 +73,7 @@ class BookDetScreen extends React.PureComponent {
         </View>
       );
     } else {
+      console.log(this.book);
       return (
         <View style={styles.container}>
           <View style={styles.firstView.container}>

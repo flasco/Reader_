@@ -120,7 +120,7 @@ class ReadScreen extends React.PureComponent {
 
     if (this.chapterLst.length === 0) {
       this.refs.toast.show('章节内容缺失，正在抓取中...');
-      this.chapterLst = await list(this.currentBook.url);
+      this.chapterLst = await list(this.currentBook.source[1]);
       this.bookRecord = { recordChapterNum: 0, recordPage: 1 };
       AsyncStorage.setItem(chapterLstFlag, JSON.stringify(this.chapterLst));
     }

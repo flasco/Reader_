@@ -38,6 +38,8 @@ export default class PullRefreshScrollView extends Component {
     this.base64Icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAABQBAMAAAD8TNiNAAAAJ1BMVEUAAACqqqplZWVnZ2doaGhqampoaGhpaWlnZ2dmZmZlZWVmZmZnZ2duD78kAAAADHRSTlMAA6CYqZOlnI+Kg/B86E+1AAAAhklEQVQ4y+2LvQ3CQAxGLSHEBSg8AAX0jECTnhFosgcjZKr8StE3VHz5EkeRMkF0rzk/P58k9rgOW78j+TE99OoeKpEbCvcPVDJ0OvsJ9bQs6Jxs26h5HCrlr9w8vi8zHphfmI0fcvO/ZXJG8wDzcvDFO2Y/AJj9ADE7gXmlxFMIyVpJ7DECzC9J2EC2ECAAAAAASUVORK5CYII=';
     this.dragFlag = false; //scrollview是否处于拖动状态的标志
     this.prStoryKey = 'prtimekey';
+    this.getThis = this.getThis.bind(this);
+    this.props.setRefreshComp(this);
   }
   // 滚动触发
   onScroll(e) {
@@ -86,9 +88,20 @@ export default class PullRefreshScrollView extends Component {
     }).start();
   }
 
+  refreshAuto() {
+    this.scrollView.scrollTo({ x: 0, y: -70, animated: true });
+    this.setState({
+      prTitle: this.refreshingText,
+      prLoading: true,
+      prArrowDeg: new Animated.Value(0),
+    });
+    if (this.props.onRefresh) {
+      this.props.onRefresh(this);
+    }
+  }
+
   // 手指离开
   onScrollEndDrag() {
-
     this.dragFlag = false;
     if (this.state.prState) {
 
@@ -109,7 +122,9 @@ export default class PullRefreshScrollView extends Component {
         this.props.onRefresh(this);
       }
     }
-
+  }
+  getThis() {
+    return this;
   }
   // 手指未离开
   onScrollBeginDrag() {

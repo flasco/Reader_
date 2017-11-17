@@ -11,8 +11,7 @@ import styles from './index.style';
 import getNet from '../../util/getNet';
 import PullRefreshScrollView from '../../component/RefreshScollowView/index';
 
-let booklist, tht, tha, RefreshCount = 0;
-
+let booklist, tht, tha, refreshComp;
 /**
  * 包装层，为了保证能使用侧滑的菜单
  - code by Czq
@@ -27,7 +26,7 @@ class BookPackage extends React.PureComponent {
       },
       headerRight: (
         <TouchableOpacity onPress={() => {
-          tht._OpenMenu();
+          tht.openMenu();
         }}>
           <Icon
             name='ios-add'
@@ -48,11 +47,10 @@ class BookPackage extends React.PureComponent {
   constructor(props) {
     super(props);
     tht = this;
-    this._OpenMenu = this._OpenMenu.bind(this);
-    this._addBook = this._addBook.bind(this);
+    this.openMenu = this.openMenu.bind(this);
+    this.addBook = this.addBook.bind(this);
 
     this.state = {
-      load: true,
       isOpen: false
     };
   }
@@ -63,7 +61,7 @@ class BookPackage extends React.PureComponent {
     }, 2000);
   }
 
-  _OpenMenu() {
+  openMenu() {
     const flag = this.state.isOpen;
     this.setState({ isOpen: !flag });
   }
@@ -72,33 +70,25 @@ class BookPackage extends React.PureComponent {
     this.setState({ isOpen: isOpen });
   }
 
-  _addBook(data) {
+  async addBook(data) {
     let book = {
-      bookName: data.bookName,
-      author: data.author,
-      url: data.url,
-      img: data.img,
-      desc: data.desc,
+      ...data,
       latestChapter: '待检测',
-      plantformId: data.plantformId,
     };
-    console.log(data);
     booklist.push(book);
-    getNet.refreshSingleChapter(book);
     tha.setState({
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (r1, r2) => r1 !==
-          r2
-      }).cloneWithRows(booklist),
+      dataSource: booklist,
     });
     AsyncStorage.setItem('booklist', JSON.stringify(booklist));
+    await getNet.refreshSingleChapter(book);//异步更新章节。
+    tha.forceUpdate();//强制刷新
   }
 
   render() {
-    const menu = <Menu navigation={this.props.navigation} addBook={this._addBook} />;
+    const menu = <Menu navigation={this.props.navigation} addBook={this.addBook} />;
     return ((
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle='light-content' />
         <SideMenu
           menu={menu}
           isOpen={this.state.isOpen}
@@ -121,65 +111,62 @@ class BookList extends React.PureComponent {
     this.deleteBook = this.deleteBook.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
-    this.renderSeparator = this.renderSeparator.bind(this);
     this.initx = this.initx.bind(this);
+    this.setRefreshComp = this.setRefreshComp.bind(this);
 
     this.state = {
       dataSource: '',
-      load: true
     };
     this.initx();
   }
 
   async initx() {
-    const ds = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
-    });
     const val = JSON.parse(await AsyncStorage.getItem('booklist'));
     if (val === null || val.length === 0) {
       booklist = [
         {
           bookName: '天醒之路',
           author: '蝴蝶蓝',
-          url: 'http://www.xs.la/0_64/',
-          latestChapter: '待检测',
           img: 'http://www.xs.la/BookFiles/BookImages/64.jpg',
-          desc: '“路平，起床上课。” “再睡五分钟。” “给我起来！” 哗！阳光洒下，照遍路平全身。 “啊！！！”惊叫声顿时响彻云霄，将路平的睡意彻底击碎，之后已是苏唐摔门而出的怒吼：“什么条件啊你玩裸睡？！” ......',
-          plantformId: 5
+          desc: '“路平，起床上课。”\n“再睡五分钟。”\n“给我起来！”\n哗！阳光洒下，照遍路平全身。\n“啊！！！”惊叫声顿时响彻云霄，将路平的睡意彻底击碎，之后已是苏唐摔门而出的怒吼：“什么条件啊你玩裸睡？！”\n......',
+          latestChapter: '待检测',
+          plantformId: 1,
+          source: {
+            '1': 'http://www.xs.la/0_64/',
+            '2': 'http://www.kanshuzhong.com/book/36456/',
+          }
         }, {
           bookName: '飞剑问道',
           author: '我吃西红柿',
-          url: 'http://www.xs.la/34_34495/',
-          latestChapter: '待检测',
           img: 'http://www.xs.la/BookFiles/BookImages/feijianwendao.jpg',
-          desc: '这是一个关于飞剑的故事。',
-          plantformId: 8
+          desc: '修仙觅长生，热血任逍遥，踏莲曳波涤剑骨，凭虚御风塑圣魂！在这个世界，有狐仙、河神、水怪、大妖，也有求长生的修行者。修行者们，开法眼，可看妖魔鬼怪。炼一口飞剑，可千里杀敌。千里眼、顺风耳，更可探查四方。……秦府二公子‘秦云’，便是一位修行者……',
+          latestChapter: '待检测',
+          plantformId: 1,
+          source: {
+            '1': 'http://www.xs.la/34_34495/',
+            '2': 'http://www.kanshuzhong.com/book/118096/',
+          }
         }
       ];
       alert('发现书架为空，自动添加书籍。');
       AsyncStorage.setItem('booklist', JSON.stringify(booklist))
-      this.setState({
-        dataSource: ds.cloneWithRows(booklist),
-        load: false
-      });
     } else {
       booklist = val;
-      this.setState({
-        dataSource: ds.cloneWithRows(val),
-        load: false
-      });
     }
+    this.setState({
+      dataSource: booklist,
+    });
+    refreshComp.refreshAuto();//自动下拉刷新
   }
 
   deleteBook(deleteId) {
     booklist.splice(deleteId, 1);
     this.setState({
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (r1, r2) => r1 !== r2
-      }).cloneWithRows(booklist)
+      dataSource: booklist
     }, () => {
       AsyncStorage.setItem('booklist', JSON.stringify(booklist));
     });
+    this.forceUpdate();
   }
 
   renderRow(rowData, sectionID, rowID) {
@@ -219,42 +206,40 @@ class BookList extends React.PureComponent {
       </Swipeout >
     );
   }
-  renderSeparator() {
-    return (<View style={styles.solid} />);
-  }
-  onRefresh(PullRefresh) {
-    getNet.refreshChapter(booklist, () => {
-      RefreshCount++;
-      if (RefreshCount != booklist.length)
-        return;
-      this.setState({
-        dataSource: new ListView.DataSource({
-          rowHasChanged: (r1, r2) => r1 !== r2
-        }).cloneWithRows(booklist)
-      }, () => {
-        RefreshCount = 0;
-        AsyncStorage.setItem('booklist', JSON.stringify(booklist));
-        PullRefresh.onRefreshEnd();
-      });
+
+  async onRefresh(PullRefresh) {
+    console.log(PullRefresh);
+    await getNet.refreshChapter(booklist);
+    this.setState({
+      dataSource: booklist
+    }, () => {
+      AsyncStorage.setItem('booklist', JSON.stringify(booklist));
+      PullRefresh.onRefreshEnd();
     });
   }
 
+  setRefreshComp(that){
+    refreshComp = that;
+  }
+
   render() {
-    return (this.state.load ? (false) : (
+    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    return (
       <View style={styles.container}>
         <ListView
-          style={{
-            flex: 1
-          }}
-          renderScrollComponent={(props) => <PullRefreshScrollView    
+          ref="list"
+          style={{ flex: 1 }}
+          renderScrollComponent={(props) => <PullRefreshScrollView
             onRefresh={(PullRefresh) => this.onRefresh(PullRefresh)}
+            setRefreshComp={this.setRefreshComp}
             color={styles.container.backgroundColor}
             {...props} />}
-          dataSource={this.state.dataSource}
-          renderSeparator={this.renderSeparator}
+          enableEmptySections={true}
+          dataSource={ds.cloneWithRows(this.state.dataSource)}
+          renderSeparator={() => <View style={styles.solid} />}
           renderRow={this.renderRow} />
       </View>
-    ));
+    );
   }
 }
 

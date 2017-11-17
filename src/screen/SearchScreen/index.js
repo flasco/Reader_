@@ -16,10 +16,9 @@ class SearchScreen extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this._renderRow = this._renderRow.bind(this);
+    this.renderRow = this.renderRow.bind(this);
     this.SearchBook = this.SearchBook.bind(this);
-    this._pressFunc = this._pressFunc.bind(this);
-    this._renderSeparator = this._renderSeparator.bind(this);
+    this.pressFunc = this.pressFunc.bind(this);
 
     this.state = {
       text: '',
@@ -30,7 +29,6 @@ class SearchScreen extends React.PureComponent {
 
   componentDidMount() {
     let bookNam = this.props.navigation.state.params.bookNam || '';
-    // console.log(bookNam);
     if (bookNam !== '') {
       this.setState({
         text: bookNam,
@@ -42,7 +40,7 @@ class SearchScreen extends React.PureComponent {
 
   async SearchBook(text) {
     let { data } = await search(text);
-    console.log(data);
+    // console.log(data);
     if (data === 'error...') {
       this.setState({
         dataSource: '',
@@ -56,7 +54,7 @@ class SearchScreen extends React.PureComponent {
     }
   }
 
-  _pressFunc(rowData) {
+  pressFunc(rowData) {
     const { navigate } = this.props.navigation;
     navigate('BookDet', {
       book: rowData,
@@ -64,28 +62,22 @@ class SearchScreen extends React.PureComponent {
     });
   }
 
-  _renderRow(item) {
+  renderRow(item) {
     let rowData = item.item;
     const { navigate } = this.props.navigation;
     return (
       <TouchableOpacity
-        onPress={() => { this._pressFunc(rowData); }}>
+        onPress={() => { this.pressFunc(rowData); }}>
         <View style={{
           height: 52
         }}>
           <Text style={styles.rowStyle}>
-            {`${rowData.bookName} - ${rowData.author}   ${UrlId[rowData.plantformId - 1]}`}
+            {`${rowData.bookName} - ${rowData.author}`}
           </Text>
         </View>
       </TouchableOpacity>
     );
   }
-
-  _renderSeparator() {
-    return (<View style={styles.solid} />);
-  }
-
-  _keyExtractor = (item, index) => item.url;
 
   render() {
     return (
@@ -121,10 +113,10 @@ class SearchScreen extends React.PureComponent {
             flex: 1
           }}
           data={this.state.dataSource}
-          renderItem={this._renderRow}
-          ItemSeparatorComponent={this._renderSeparator}
+          renderItem={this.renderRow}
+          ItemSeparatorComponent={()=><View style={styles.solid} />}
           getItemLayout={(data, index) => ({ length: 52, offset: 53 * index, index })}//行高38，分割线1，所以offset=39
-          keyExtractor={this._keyExtractor} />
+          keyExtractor={(item, index) => index} />
       </View>
     );
   }
