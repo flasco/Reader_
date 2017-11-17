@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Text, View, ListView, TouchableOpacity, StatusBar, AsyncStorage } from 'react-native';
 
-import SplashScreen from 'react-native-splash-screen';
+import Swipeout from 'react-native-swipeout';
 import { Icon } from 'react-native-elements';
 import SideMenu from 'react-native-side-menu';
-import Swipeout from 'react-native-swipeout';
+import SplashScreen from 'react-native-splash-screen';
 
-import PullRefreshScrollView from '../../component/RefreshScollowView/index';
 import Menu from '../MenuScreen';
 import styles from './index.style';
 import getNet from '../../util/getNet';
+import PullRefreshScrollView from '../../component/RefreshScollowView/index';
 
 let booklist, tht, tha, RefreshCount = 0;
 
@@ -139,12 +139,12 @@ class BookList extends React.PureComponent {
     if (val === null || val.length === 0) {
       booklist = [
         {
-          bookName: '美食供应商',
-          author: '菜猫',
-          url: 'http://www.biqiuge.com/book/6888/',
+          bookName: '天醒之路',
+          author: '蝴蝶蓝',
+          url: 'http://www.xs.la/0_64/',
           latestChapter: '待检测',
-          img: 'http://www.xs.la/BookFiles/BookImages/meishigongyingshang.jpg',
-          desc: '这是一个关于吃货的故事。',
+          img: 'http://www.xs.la/BookFiles/BookImages/64.jpg',
+          desc: '“路平，起床上课。” “再睡五分钟。” “给我起来！” 哗！阳光洒下，照遍路平全身。 “啊！！！”惊叫声顿时响彻云霄，将路平的睡意彻底击碎，之后已是苏唐摔门而出的怒吼：“什么条件啊你玩裸睡？！” ......',
           plantformId: 5
         }, {
           bookName: '飞剑问道',
@@ -246,7 +246,7 @@ class BookList extends React.PureComponent {
           style={{
             flex: 1
           }}
-          renderScrollComponent={(props) => <PullRefreshScrollView
+          renderScrollComponent={(props) => <PullRefreshScrollView    
             onRefresh={(PullRefresh) => this.onRefresh(PullRefresh)}
             color={styles.container.backgroundColor}
             {...props} />}

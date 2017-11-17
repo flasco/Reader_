@@ -44,7 +44,7 @@ class Menu extends React.PureComponent {
         </TouchableOpacity>
         <Text style={styles.copyRight} onPress={() => {
           Linking.openURL('https://github.com/flasco');
-        }}>Start at Wed</Text>
+        }}>Start at Thu</Text>
       </View>
     );
   }

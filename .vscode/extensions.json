@@ -6,6 +6,7 @@
     "formulahendry.auto-close-tag",
     "formulahendry.auto-rename-tag",
     "EQuimper.react-native-react-redux",
+    "christian-kohler.path-intellisense",
     "vsmobile.vscode-react-native",
     "robertohuertasm.vscode-icons",
     "formulahendry.code-runner",
