@@ -45,6 +45,10 @@ export default class Navigat extends React.PureComponent {
             onPress={() => {
               this.props.navigation.goBack();
             }} />
+            <Text style={{color:'#ddd',fontSize:17,bottom:13,right:24,position:'absolute'}}
+              onPress={()=>{
+                alert('should jmp');
+              }}>换源</Text>
         </View>
       );
     } else if (this.props.choose === 2) {

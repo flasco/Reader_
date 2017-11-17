@@ -28,6 +28,6 @@ export async function stay(hour = 6) {
   return await axios.get(`${ServerIp}/start?h=${hour}`);
 }
 
-export async function search(text) {
-  return await axios.get(`${ServerIp}/sear?name=${text}`);
+export async function search(name,author = '',pid = '') {
+  return await axios.get(`${ServerIp}/sear?name=${name}&aut=${author}&pid=${pid}`);
 }

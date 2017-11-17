@@ -68,10 +68,11 @@ class RankScreen extends React.PureComponent {
     }
   }
 
-  JmpToBook(nam) {
+  JmpToBook(nam,aut) {
     const { navigate } = this.props.navigation;
-    navigate('Sear', {
+    navigate('BookDet', {
       bookNam: nam,
+      bookAut: aut,
       addBook: this.props.navigation.state.params.addBook
     });
   }
@@ -80,12 +81,12 @@ class RankScreen extends React.PureComponent {
     let rowData = item.item;
     return (
       <TouchableOpacity
-        onPress={() => { tht.JmpToBook(rowData.name); }}>
+        onPress={() => { tht.JmpToBook(rowData.name, rowData.author); }}>
         <View style={{
           height: 70
         }}>
           <Text style={styles.rowStyle}>
-            {`[${rowData.type}]  ${rowData.name} - ${rowData.author}\n${rowData.latestChapter}`}
+            {`[${rowData.type}]  ${rowData.name} - ${rowData.author}\n${rowData.latestChapter.length > 23 ? (rowData.latestChapter.substr(0, 23) + '...') : rowData.latestChapter}`}
           </Text>
         </View>
       </TouchableOpacity>
