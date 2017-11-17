@@ -81,6 +81,7 @@ class BookPackage extends React.PureComponent {
     });
     AsyncStorage.setItem('booklist', JSON.stringify(booklist));
     await getNet.refreshSingleChapter(book);//异步更新章节。
+    console.log('forceUpdate')
     tha.forceUpdate();//强制刷新
   }
 
@@ -156,7 +157,7 @@ class BookList extends React.PureComponent {
     this.setState({
       dataSource: booklist,
     });
-    refreshComp.refreshAuto();//自动下拉刷新
+    refreshComp.refreshAuto();
   }
 
   deleteBook(deleteId) {
@@ -208,7 +209,6 @@ class BookList extends React.PureComponent {
   }
 
   async onRefresh(PullRefresh) {
-    console.log(PullRefresh);
     await getNet.refreshChapter(booklist);
     this.setState({
       dataSource: booklist
@@ -218,8 +218,8 @@ class BookList extends React.PureComponent {
     });
   }
 
-  setRefreshComp(that){
-    refreshComp = that;
+  setRefreshComp(that) {
+    refreshComp === undefined && (refreshComp = that);
   }
 
   render() {
