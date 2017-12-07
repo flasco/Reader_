@@ -50,6 +50,13 @@ class RankScreen extends React.PureComponent {
     this.getNet(currentPag++);
   }
 
+  componentWillUnmount() {
+    //重写组件的setState方法，直接返回空
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   async getNet(page = 1) {
     const { data } = await rnk(page);
     let source = this.state.dataSource;

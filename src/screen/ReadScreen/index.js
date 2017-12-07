@@ -102,6 +102,14 @@ class ReadScreen extends React.PureComponent {
     this.initConf();
 
   }
+
+  componentWillUnmount() {
+    //重写组件的setState方法，直接返回空
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+  
   async initConf() {
     bookRecordFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_record`;
     chapterLstFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_list`;

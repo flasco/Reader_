@@ -1,13 +1,18 @@
 
 import { AsyncStorage } from 'react-native'
 import { list } from '../services/book';
+
 export default class getNet {
   static async refreshChapter(booklist) {
+    let tasks = [];
     for (let i = 0, j = booklist.length; i < j; i++) {
       let bookChapterLst = `${booklist[i].bookName}_${booklist[i].plantformId}_list`;
       let latech = booklist[i].latestChapter;
-      let latechap = await this.get(booklist[i].source[booklist[i].plantformId], bookChapterLst, latech);
-      latechap && (booklist[i].latestChapter = latechap);
+      tasks.push(this.get(booklist[i].source[booklist[i].plantformId], bookChapterLst, latech))
+    }
+    let resArray = await Promise.all(tasks); // 使用promise.all 并行执行网络请求，减少等待时间。
+    for (let i = 0, j = booklist.length; i < j; i++) {
+      resArray[i] !== undefined && (booklist[i].latestChapter = resArray[i]);
     }
   }
 

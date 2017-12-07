@@ -61,6 +61,13 @@ class BookPackage extends React.PureComponent {
     }, 2000);
   }
 
+  componentWillUnmount() {
+    //重写组件的setState方法，直接返回空
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   openMenu() {
     const flag = this.state.isOpen;
     this.setState({ isOpen: !flag });
@@ -81,7 +88,7 @@ class BookPackage extends React.PureComponent {
     });
     AsyncStorage.setItem('booklist', JSON.stringify(booklist));
     await getNet.refreshSingleChapter(book);//异步更新章节。
-    console.log('forceUpdate')
+    // console.log('forceUpdate')
     tha.forceUpdate();//强制刷新
   }
 
@@ -121,6 +128,13 @@ class BookList extends React.PureComponent {
     this.initx();
   }
 
+  componentWillUnmount() {
+    //重写组件的setState方法，直接返回空
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   async initx() {
     const val = JSON.parse(await AsyncStorage.getItem('booklist'));
     if (val === null || val.length === 0) {
@@ -154,10 +168,10 @@ class BookList extends React.PureComponent {
     } else {
       booklist = val;
     }
+    refreshComp.refreshAuto();
     this.setState({
       dataSource: booklist,
     });
-    refreshComp.refreshAuto();
   }
 
   deleteBook(deleteId) {

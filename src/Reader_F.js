@@ -12,9 +12,6 @@ import RankScreen from './screen/RankScreen'
 import BookDetScreen from './screen/BookDetScreen';
 
 import { StackNavigator } from 'react-navigation';
-import axios from 'axios';
-
-global.axios = axios;
 
 SearchScreen.navigationOptions = ({ navigation }) => {
   return {
@@ -25,7 +22,6 @@ SearchScreen.navigationOptions = ({ navigation }) => {
 ReadScreen.navigationOptions = ({ navigation }) => {
   return { header: null };
 };
-
 
 const Reader_F = StackNavigator({
   Home: { screen: BookListScreen },

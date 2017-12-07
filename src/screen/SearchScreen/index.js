@@ -38,6 +38,13 @@ class SearchScreen extends React.PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    //重写组件的setState方法，直接返回空
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
   async SearchBook(text) {
     let { data } = await search(text);
     // console.log(data);

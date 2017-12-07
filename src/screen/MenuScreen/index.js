@@ -12,9 +12,17 @@ class Menu extends React.PureComponent {
     this.leanMore = this.leanMore.bind(this);
     this.CleanData = this.CleanData.bind(this);
   }
+
+  componentWillUnmount() {
+    //重写组件的setState方法，直接返回空
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+  
   async leanMore() {
-    const { data } = await stay();
-    alert(data);
+    let str = '服务器开启从每日早上7点至凌晨1点，想在不开的时间段继续看书请注意手动缓存~';
+    alert(str);
   }
 
   async CleanData() {
@@ -37,7 +45,7 @@ class Menu extends React.PureComponent {
           <Text style={styles.item} >RankList</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={this.leanMore}>
-          <Text style={styles.item} >Learn More</Text>
+          <Text style={styles.item} >Server Open Time</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={this.CleanData}>
           <Text style={styles.item} >CleanAllData</Text>

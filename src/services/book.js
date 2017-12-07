@@ -1,7 +1,8 @@
 
 import axios from 'axios';
 
-const ServerIp = 'https://testdb.leanapp.cn';
+const ServerIp = 'https://flasco.leanapp.cn';
+const StorageIp = 'https://testdb.leanapp.cn'
 
 export async function content(url) {
   return await axios.get(`${ServerIp}/Analy_x?action=2&url=${url}`);
@@ -29,5 +30,5 @@ export async function stay(hour = 6) {
 }
 
 export async function search(name,author = '',pid = '') {
-  return await axios.get(`${ServerIp}/sear?name=${name}&aut=${author}&pid=${pid}`);
+  return await axios.get(`${StorageIp}/sear?name=${name}&aut=${author}&pid=${pid}`);
 }
