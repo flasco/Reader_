@@ -39,6 +39,7 @@
 		399FF3FFA76C4C6CA9982EC9 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 127DA262BFC14786889EF8BB /* Octicons.ttf */; };
 		5AFC30A3965B477880D150F7 /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 951ECA3FE429419C9EC5C01C /* libSplashScreen.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
+		6162CA4A1FE64827001DEC9D /* Brightness.m in Sources */ = {isa = PBXBuildFile; fileRef = 6162CA491FE64827001DEC9D /* Brightness.m */; };
 		61D301FF1F8C920500EA8397 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61D301FE1F8C920500EA8397 /* Launch Screen.storyboard */; };
 		61D33FF31F8A6EF80066FBB7 /* IndexY.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D33FF21F8A6EF80066FBB7 /* IndexY.png */; };
 		6E8A2AE35E3346C09201CE18 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E0D5C35CA2EC408699D280D3 /* MaterialIcons.ttf */; };
@@ -354,6 +355,8 @@
 		2D02E4901E0B4A5D006451C7 /* Reader_-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Reader_-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		320E17DBD1E344C2924B6AE4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		6162CA481FE64827001DEC9D /* Brightness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brightness.h; sourceTree = "<group>"; };
+		6162CA491FE64827001DEC9D /* Brightness.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Brightness.m; sourceTree = "<group>"; };
 		61D301FE1F8C920500EA8397 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		61D33FF21F8A6EF80066FBB7 /* IndexY.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = IndexY.png; path = Reader_/IndexY.png; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -518,6 +521,8 @@
 				61D33FF21F8A6EF80066FBB7 /* IndexY.png */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				6162CA481FE64827001DEC9D /* Brightness.h */,
+				6162CA491FE64827001DEC9D /* Brightness.m */,
 			);
 			name = Reader_;
 			sourceTree = "<group>";
@@ -1197,6 +1202,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				6162CA4A1FE64827001DEC9D /* Brightness.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

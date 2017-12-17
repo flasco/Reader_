@@ -1,3 +1,8 @@
+/**
+ * 定制自 race604/react-native-viewpager
+ * https://github.com/race604/react-native-viewpager
+ */
+
 import React, { PureComponent } from 'react';
 import {
   Dimensions,
@@ -6,6 +11,7 @@ import {
   Animated,
   StyleSheet,
   Easing,
+  NativeModules
 } from 'react-native';
 
 import StaticRenderer from 'react-native/Libraries/Components/StaticRenderer';
@@ -16,6 +22,7 @@ const deviceWidth = Dimensions.get('window').width;
 const LeftBoundary = deviceWidth / 4;
 const RightBoundary = deviceWidth - LeftBoundary;
 let Shield = 0;//修复呼出菜单之后下一次滑页出现bug
+const Brightness = NativeModules.Brightness;
 
 class ViewPager extends PureComponent {
   static DataSource = ViewPagerDataSource;
@@ -34,6 +41,10 @@ class ViewPager extends PureComponent {
         });
     };
     let maxP;
+    Brightness.get(x => {
+      this.brightVal = +x;//转型
+    })
+    this.shouldJmp = true;
     this.state = {
       toprev: 0,
       currentPage: 0,
@@ -46,6 +57,7 @@ class ViewPager extends PureComponent {
     this.childIndex = 0;
     this.maxP = this.props.dataSource.getPageCount();
     let release = (e, gestureState) => {
+      if (!this.shouldJmp) return;
       let relativeGestureDistance = gestureState.dx / deviceWidth,
         vx = gestureState.vx;
       Shield = Shield >= 2 ? 0 : Shield;
@@ -62,7 +74,6 @@ class ViewPager extends PureComponent {
       let clickX = gestureState.x0;
       let moveX = gestureState.dx;
       let flag = gestureState.moveX === 0 ? 0 : (gestureState.moveX > gestureState.x0 ? -1 : 1);
-
       if (clickX > LeftBoundary && clickX < RightBoundary && moveX == 0) {
         this.props.clickBoard();
         Shield++;
@@ -70,6 +81,7 @@ class ViewPager extends PureComponent {
       }
 
       if (this.props.locked) return false;
+
       if (clickX > RightBoundary && moveX == 0 || flag === 1) {
         this.props.hasTouch && this.props.hasTouch(false);
         this.setState({ toprev: 0 }, () => {
@@ -91,14 +103,13 @@ class ViewPager extends PureComponent {
 
 
     this._panResponder = PanResponder.create({
+
       onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
       // Claim responder if it's a horizontal pan
       onMoveShouldSetPanResponder: (e, gestureState) => {
         // console.log(this.props.locked);
         if (Math.abs(gestureState.dx) > Math.abs(gestureState.dy)) {
-          if (/* (gestureState.moveX <= this.props.edgeHitWidth ||
-              gestureState.moveX >= deviceWidth - this.props.edgeHitWidth) && */
-            this.props.locked !== true && !this.fling) {
+          if (this.props.locked !== true && !this.fling) {
             this.props.hasTouch && this.props.hasTouch(true);
             return true;
           }
@@ -116,9 +127,30 @@ class ViewPager extends PureComponent {
         if (Shield >= 2) {
           return;
         }
-        let dx = gestureState.dx;
-        let offsetX = -dx / this.state.viewWidth + this.childIndex;
-        this.state.scrollValue.setValue(offsetX);
+        let finger = gestureState.numberActiveTouches;
+        let moveY = gestureState.dy;
+        
+        if (finger === 1) {
+          let dx = gestureState.dx;
+          let offsetX = -dx / this.state.viewWidth + this.childIndex;
+          this.state.scrollValue.setValue(offsetX);
+          this.shouldJmp || (this.shouldJmp = true);
+        } else if (finger === 2) {
+          if (this.brightVal !== 0.0 && moveY > 0.0) {//下滑 
+            this.brightVal -= 0.01;
+            if (this.brightVal < 0.0) {
+              this.brightVal = 0.0;
+            }
+            Brightness.set(this.brightVal);
+          } else if (this.brightVal !== 1.0 && moveY < 0.0) { //上滑
+            this.brightVal += 0.01;
+            if (this.brightVal > 1.0) {
+              this.brightVal = 1.0;
+            }
+            Brightness.set(this.brightVal);
+          }
+          this.shouldJmp && (this.shouldJmp = false);
+        }
       },
     });
 
@@ -126,13 +158,10 @@ class ViewPager extends PureComponent {
       this.childIndex = 1;
       this.state.scrollValue.setValue(1);
     }
-    // if(initf === 0){
     let initialPage = Number(this.props.initialPage);
-    // initf = 1;
     if (initialPage > 0) {
       this.goToPage(initialPage, false);
     }
-    // }
   }
 
   componentDidMount() {

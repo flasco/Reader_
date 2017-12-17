@@ -82,14 +82,12 @@ class BookPackage extends React.PureComponent {
       ...data,
       latestChapter: '待检测',
     };
+    await getNet.refreshSingleChapter(book);
     booklist.push(book);
     tha.setState({
-      dataSource: booklist,
+      dataSource: [...booklist],
     });
     AsyncStorage.setItem('booklist', JSON.stringify(booklist));
-    await getNet.refreshSingleChapter(book);//异步更新章节。
-    // console.log('forceUpdate')
-    tha.forceUpdate();//强制刷新
   }
 
   render() {
@@ -144,7 +142,7 @@ class BookList extends React.PureComponent {
           author: '蝴蝶蓝',
           img: 'http://www.xs.la/BookFiles/BookImages/64.jpg',
           desc: '“路平，起床上课。”\n“再睡五分钟。”\n“给我起来！”\n哗！阳光洒下，照遍路平全身。\n“啊！！！”惊叫声顿时响彻云霄，将路平的睡意彻底击碎，之后已是苏唐摔门而出的怒吼：“什么条件啊你玩裸睡？！”\n......',
-          latestChapter: '待检测',
+          latestChapter: '第七百二十二章 堂皇而入',
           plantformId: 1,
           source: {
             '1': 'http://www.xs.la/0_64/',
@@ -170,18 +168,16 @@ class BookList extends React.PureComponent {
     }
     refreshComp.refreshAuto();
     this.setState({
-      dataSource: booklist,
+      dataSource: [...booklist],
     });
   }
 
   deleteBook(deleteId) {
     booklist.splice(deleteId, 1);
     this.setState({
-      dataSource: booklist
-    }, () => {
-      AsyncStorage.setItem('booklist', JSON.stringify(booklist));
+      dataSource: [...booklist]
     });
-    this.forceUpdate();
+    AsyncStorage.setItem('booklist', JSON.stringify(booklist));
   }
 
   renderRow(rowData, sectionID, rowID) {
@@ -194,22 +190,17 @@ class BookList extends React.PureComponent {
             this.deleteBook(rowID);
           },
           backgroundColor: 'red'
-        }
-        ]}
+        }]}
         autoClose={true}
         sectionID={sectionID}
         close={!(this.state.sectionID === sectionID && this.state.rowID === rowID)}
         backgroundColor={styles.container.backgroundColor}>
         <TouchableOpacity
           onLongPress={() => {
-            navigate('BookDet', {
-              book: rowData
-            });
+            navigate('BookDet', { book: rowData });
           }}
           onPress={() => {
-            navigate('Read', {
-              book: rowData
-            });
+            navigate('Read', { book: rowData });
           }}>
           <View style={{ height: 52 }}>
             <Text style={styles.rowStyle}>
@@ -225,7 +216,7 @@ class BookList extends React.PureComponent {
   async onRefresh(PullRefresh) {
     await getNet.refreshChapter(booklist);
     this.setState({
-      dataSource: booklist
+      dataSource: [...booklist]
     }, () => {
       AsyncStorage.setItem('booklist', JSON.stringify(booklist));
       PullRefresh.onRefreshEnd();

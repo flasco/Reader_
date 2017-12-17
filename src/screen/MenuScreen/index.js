@@ -3,7 +3,6 @@ import React from 'react';
 
 import { stay } from '../../services/book';
 import styles from './index.style';
-
 const window = Dimensions.get('window');
 
 class Menu extends React.PureComponent {
@@ -19,7 +18,7 @@ class Menu extends React.PureComponent {
       return;
     };
   }
-  
+
   async leanMore() {
     let str = '服务器开启从每日早上7点至凌晨1点，想在不开的时间段继续看书请注意手动缓存~';
     alert(str);
