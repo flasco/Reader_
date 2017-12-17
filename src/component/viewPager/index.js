@@ -57,7 +57,10 @@ class ViewPager extends PureComponent {
     this.childIndex = 0;
     this.maxP = this.props.dataSource.getPageCount();
     let release = (e, gestureState) => {
-      if (!this.shouldJmp) return;
+      if (!this.shouldJmp) {
+       this.shouldJmp = true;
+       return ; 
+      };
       let relativeGestureDistance = gestureState.dx / deviceWidth,
         vx = gestureState.vx;
       Shield = Shield >= 2 ? 0 : Shield;
@@ -134,7 +137,6 @@ class ViewPager extends PureComponent {
           let dx = gestureState.dx;
           let offsetX = -dx / this.state.viewWidth + this.childIndex;
           this.state.scrollValue.setValue(offsetX);
-          this.shouldJmp || (this.shouldJmp = true);
         } else if (finger === 2) {
           if (this.brightVal !== 0.0 && moveY > 0.0) {//下滑 
             this.brightVal -= 0.01;
