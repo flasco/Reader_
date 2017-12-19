@@ -2,7 +2,6 @@ import {
   MENU_CTL,
   MENU_SWITCH,
   NIGHTMODE_SWITCH,
-  LOADING_SWITCH
 } from '../actions/actionTypes';
 
 

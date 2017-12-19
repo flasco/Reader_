@@ -8,7 +8,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 import { connect } from 'react-redux';
 
-import { listAdd, listDelete, listUpdate } from '../../actions/list'
+import { listAdd, listDelete, listUpdate, listInit, listRead } from '../../actions/list'
 import { menuCtl, menuSwitch } from '../../actions/app';
 
 import Menu from '../MenuScreen';
@@ -16,12 +16,9 @@ import styles from './index.style';
 import getNet from '../../util/getNet';
 import PullRefreshScrollView from '../../component/RefreshScollowView/index';
 
-let booklist, tht, refreshComp;
-/**
- * 包装层，为了保证能使用侧滑的菜单
- - code by Czq
- */
-class BookPackage extends React.PureComponent {
+let tht;
+
+class BookPackage extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '古意流苏',
@@ -62,18 +59,17 @@ class BookPackage extends React.PureComponent {
     this.deleteBook = this.deleteBook.bind(this);
     this.renderRow = this.renderRow.bind(this);
 
-    // this.initx();
-    this.onRefresh();
+    props.dispatch(listInit());
   }
 
   componentDidMount() {
     setTimeout(() => {
       SplashScreen.hide();
     }, 2000);
+    this.onRefresh();
   }
 
   componentWillUnmount() {
-    //重写组件的setState方法，直接返回空
     this.setState = (state, callback) => {
       return;
     };
@@ -81,7 +77,6 @@ class BookPackage extends React.PureComponent {
 
   deleteBook(deleteId) {
     this.props.dispatch(listDelete(deleteId));
-    // AsyncStorage.setItem('booklist', JSON.stringify(booklist));
   }
 
   renderRow(rowData, sectionID, rowID) {
@@ -105,6 +100,9 @@ class BookPackage extends React.PureComponent {
           }}
           onPress={() => {
             navigate('Read', { book: rowData });
+            setTimeout(() => {
+              this.props.dispatch(listRead(rowID))
+            }, 1000);
           }}>
           <View style={{ height: 52 }}>
             <Text style={styles.rowStyle}>
@@ -118,22 +116,23 @@ class BookPackage extends React.PureComponent {
   }
 
   onRefresh = () => {
-    this.props.dispatch(listUpdate(this.props.list));
+    setTimeout(() => {
+      this.props.isInit ? this.props.dispatch(listUpdate(this.props.list)) : this.onRefresh()
+    }, 521);
   }
 
   async addBook(data) {
-    let book = {
+    this.props.dispatch(listAdd({
       ...data,
       latestChapter: '待检测',
-    };
-    this.props.dispatch(listAdd(book));
-    // AsyncStorage.setItem('booklist', JSON.stringify(booklist));
+    }));
   }
 
   render() {
     const menu = <Menu navigation={this.props.navigation} addBook={this.addBook} />;
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    const { dispatch, list, loadingFlag } = this.props;
+    const { dispatch, list, loadingFlag, isInit } = this.props;
+    if (!isInit) return null;
     return ((
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
@@ -151,8 +150,7 @@ class BookPackage extends React.PureComponent {
                   refreshing={loadingFlag}
                   onRefresh={this.onRefresh}
                   title="Loading..."
-                  titleColor="#000"
-                />}
+                  titleColor="#000" />}
               enableEmptySections={true}
               dataSource={ds.cloneWithRows(list)}
               renderSeparator={() => <View style={styles.solid} />}
@@ -167,6 +165,7 @@ class BookPackage extends React.PureComponent {
 function select(state) {
   return {
     list: state.list.list,
+    isInit: state.list.isInit,
     menuFlag: state.app.menuFlag,
     loadingFlag: state.list.loadingFlag
   }

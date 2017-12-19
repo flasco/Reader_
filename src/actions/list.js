@@ -3,12 +3,28 @@ import {
   LIST_DELETE,
   LIST_UPDATE,
   LIST_READ,
-  LIST_LOAD
+  LIST_INIT,
+  LOADING_CTL
 } from './actionTypes';
 
 import getNet from '../util/getNet'
+import { AsyncStorage } from 'react-native';
 
+export function listInit() {
+  return dispatch => {
+    dispatch(requestFetch());
+    return AsyncStorage.getItem('booklist')
+      .then(booklist => JSON.parse(booklist))
+      .then(list => {
+        list.filter(x => x.latestChapter = '没有');
+        dispatch(receivelistInit(list))
+      })
+  }
+}
 
+function receivelistInit(list) {
+  return { type: LIST_INIT, list }
+}
 
 export function listAdd(book) {
   return dispatch => {
@@ -19,7 +35,7 @@ export function listAdd(book) {
 }
 
 function requestFetch(type = 'NULL') {
-  return { type }//LIST_LOAD
+  return { type }
 }
 
 function receiveAddFetch(book) {
@@ -30,11 +46,17 @@ export function listDelete(bookId) {
   return { type: LIST_DELETE, bookId }
 }
 
+export function loadingCrl(flag) {
+  return { type: LOADING_CTL, flag }
+}
+
 export function listUpdate(list) {
   return dispatch => {
-    dispatch(requestFetch(LIST_LOAD));
+    dispatch(loadingCrl(true));
     return getNet.refreshChapter(list)
-      .then(latestInfo => dispatch(receiveUpdateFetch(latestInfo)))
+      .then(latestInfo => {
+        dispatch(receiveUpdateFetch(latestInfo))
+      })
   }
 }
 
