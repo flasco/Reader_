@@ -14,12 +14,14 @@ export default class getNet {
     for (let i = 0, j = booklist.length; i < j; i++) {
       resArray[i] !== undefined && (booklist[i].latestChapter = resArray[i]);
     }
+    return resArray;
   }
 
   static async refreshSingleChapter(book) {
     let bookChapterLstFlag = `${book.bookName}_${book.plantformId}_list`;
     let latechap = await this.get(book.source[book.plantformId], bookChapterLstFlag, book.latestChapter)
     book.latestChapter = latechap;
+    return book;
   }
 
   static async get(url, bookChapterLst, latech) {
