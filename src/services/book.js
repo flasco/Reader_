@@ -9,7 +9,7 @@ export async function content(url) {
 }
 
 export async function list(url) {
-  let { data } = await axios.get(`${ServerIp}/Analy_x?action=1&url=${url}`);
+  let { data } = await axios.get(`${ServerIp}/Analy_x?action=1&url=${url}`,{timeout: 5000});
   let n = [], i = 0;
   while (i < data.length) {
     n.push({

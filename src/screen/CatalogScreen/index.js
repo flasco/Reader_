@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, Button, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, FlatList, Button } from 'react-native';
+
+import { LargeList } from "react-native-largelist";
 
 import { list } from '../../services/book';
 import { HeaderBackButton } from 'react-navigation';
@@ -26,7 +28,7 @@ class CatalogScreen extends React.PureComponent {
         <Button
           title='gDwn'
           onPress={() => {
-            that._FlatList.scrollToIndex({ viewPosition: 0.5, index: that.lengt });
+            that.list.scrollToEnd(false);
           }}
           color='#ddd'
         ></Button>
@@ -40,10 +42,8 @@ class CatalogScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     that = this;
-    this._FlatList;
     this.lengt = 1;
     this._header = this._header.bind(this);
-    this._renderItem = this._renderItem.bind(this);
 
     this.state = {
       dataSource: '',
@@ -60,7 +60,7 @@ class CatalogScreen extends React.PureComponent {
       loadFlag: false,
     }, () => {
       setTimeout(() => {
-        that._FlatList.scrollToIndex({ viewPosition: 0.5, index: this.state.currentChapterNum });
+        this.list.scrollToIndexPath({ section: 0, row: this.state.currentChapterNum - 5 }, true);
       }, 100);
     });
   }
@@ -72,16 +72,21 @@ class CatalogScreen extends React.PureComponent {
     };
   }
 
-  _renderItem(item) {
-    let txt = item.item.title;
+  itemRender = (section, index) => {
+    let item = this.state.dataSource[index];
     return (
-      <TouchableOpacity style={{ height: 38 }}
-        onPress={() => {
-          this.props.navigation.state.params.callback(item.index);
-          this.props.navigation.goBack();
-        }}>
-        <Text style={[styles.rowStyle, this.state.currentChapterNum === item.index ? styles.red : false]}>{txt}</Text>
-      </TouchableOpacity>
+      <View>
+        <View style={[styles.solid]} />
+        <TouchableHighlight style={{ height: 38 }}
+          underlayColor='#e1e1e1'
+          activeOpacity={0.7}
+          onPress={() => {
+            this.props.navigation.state.params.callback(index);
+            this.props.navigation.goBack();
+          }}>
+          <Text style={[styles.rowStyle, this.state.currentChapterNum === index ? styles.red : false]}>{item.title}</Text>
+        </TouchableHighlight>
+      </View>
     );
   }
 
@@ -89,23 +94,24 @@ class CatalogScreen extends React.PureComponent {
     return (
       <View>
         <Text style={styles.LatestChapter}>[最新章节]</Text>
-        <View style={styles.solid} />
+        {/* <View style={styles.solid} /> */}
       </View>
     );
   }
 
   render() {
     if (!this.state.loadFlag) {
+      let data = this.state.dataSource;
       return (
-        <View style={{ backgroundColor: '#D8D8D8', flex: 1 }}>
-          <FlatList
-            initialNumToRender={20}
-            ref={(c) => this._FlatList = c}
-            data={this.state.dataSource}
-            renderItem={this._renderItem}
-            ListHeaderComponent={this._header}
-            ItemSeparatorComponent={() => <View style={styles.solid} />}
-            getItemLayout={(data, index) => ({ length: 38, offset: 39 * index, index })}//行高38，分割线1，所以offset=39
+        <View style={{ backgroundColor: '#d9d9d9', flex: 1 }}>
+          <LargeList
+            ref={(q) => this.list = q}
+            style={{ flex: 1 }}
+            numberOfRowsInSection={() => data.length}
+            heightForCell={() => 38}
+            renderCell={this.itemRender}
+            renderHeader={this._header}
+            getItemLayout={(data, index) => ({ length: 38, offset: 39 * index, index })}
           />
         </View>
       );

@@ -11,25 +11,36 @@ export default class getNet {
       tasks.push(this.get(booklist[i].source[booklist[i].plantformId], bookChapterLst, latech))
     }
     let resArray = await Promise.all(tasks); // 使用promise.all 并行执行网络请求，减少等待时间。
-    for (let i = 0, j = booklist.length; i < j; i++) {
-      resArray[i] !== undefined && (booklist[i].latestChapter = resArray[i]);
-    }
+    resArray.filter((x, index) => {
+      x !== undefined && (booklist[index].latestChapter = x.title);
+    })
+    return resArray;
   }
 
   static async refreshSingleChapter(book) {
     let bookChapterLstFlag = `${book.bookName}_${book.plantformId}_list`;
-    let latechap = await this.get(book.source[book.plantformId], bookChapterLstFlag, book.latestChapter)
-    book.latestChapter = latechap;
+    let latest = await this.get(book.source[book.plantformId], bookChapterLstFlag, book.latestChapter)
+    book.latestChapter = latest.title;
+    return book;
   }
 
   static async get(url, bookChapterLst, latech) {
     const data = await list(url);
-    let tit = data[data.length - 1].title;
+    let length = data.length;
+    let tit = data[length - 1].title;
     if (tit === latech) {
       return;
     } else {
+      let num = 0;
+      for (let i = length - 1; i >= 0; i--) {
+        /**
+         * 当书籍为未检测的时候不满足条件，num = 0，
+         * 但是考虑到一开始添加书籍的时候就不应该显示更新这个状态，所以就这样~
+         */
+        data[i].title === tit && (num = length - i - 1)
+      }
       AsyncStorage.setItem(bookChapterLst, JSON.stringify(data));
-      return tit;
+      return { title: tit, num };
     }
   }
 }

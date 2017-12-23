@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
-import { Text, View, ListView, TouchableOpacity, StatusBar, AsyncStorage } from 'react-native';
-
+import { Text, View, ListView, TouchableOpacity, StatusBar, AsyncStorage, RefreshControl, Image, AppState, AppStateIOS } from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import { Icon } from 'react-native-elements';
+import { Icon, ListItem, Badge } from 'react-native-elements';
 import SideMenu from 'react-native-side-menu';
 import SplashScreen from 'react-native-splash-screen';
 
+import { connect } from 'react-redux';
+
+import { listAdd, listDelete, listUpdate, listInit, listRead, OperationClear } from '../../actions/list'
+import { menuCtl, menuSwitch } from '../../actions/app';
+
 import Menu from '../MenuScreen';
 import styles from './index.style';
-import getNet from '../../util/getNet';
-import PullRefreshScrollView from '../../component/RefreshScollowView/index';
 
-let booklist, tht, tha, refreshComp;
-/**
- * 包装层，为了保证能使用侧滑的菜单
- - code by Czq
- */
-class BookPackage extends React.PureComponent {
+let tht;
+
+class BookPackage extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '古意流苏',
@@ -26,7 +25,7 @@ class BookPackage extends React.PureComponent {
       },
       headerRight: (
         <TouchableOpacity onPress={() => {
-          tht.openMenu();
+          tht.props.dispatch(menuSwitch());
         }}>
           <Icon
             name='ios-add'
@@ -47,137 +46,40 @@ class BookPackage extends React.PureComponent {
   constructor(props) {
     super(props);
     tht = this;
-    this.openMenu = this.openMenu.bind(this);
-    this.addBook = this.addBook.bind(this);
 
     this.state = {
-      isOpen: false
+      isOpen: false,
+      dataSource: '',
     };
+
+    this.addBook = this.addBook.bind(this);
+    this.deleteBook = this.deleteBook.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+    AppState.addEventListener('change', async (e) => {
+      if (e === 'inactive' && this.props.operationNum > 0) {
+        this.props.dispatch(OperationClear())
+        await AsyncStorage.setItem('booklist', JSON.stringify(this.props.list))
+        // console.log('store success')
+      }
+    });
+    props.dispatch(listInit());
   }
 
   componentDidMount() {
     setTimeout(() => {
       SplashScreen.hide();
     }, 2000);
+    // this.onRefresh();
   }
 
   componentWillUnmount() {
-    //重写组件的setState方法，直接返回空
     this.setState = (state, callback) => {
       return;
     };
-  }
-
-  openMenu() {
-    const flag = this.state.isOpen;
-    this.setState({ isOpen: !flag });
-  }
-
-  updateMenuState(isOpen) {
-    this.setState({ isOpen: isOpen });
-  }
-
-  async addBook(data) {
-    let book = {
-      ...data,
-      latestChapter: '待检测',
-    };
-    await getNet.refreshSingleChapter(book);
-    booklist.push(book);
-    tha.setState({
-      dataSource: [...booklist],
-    });
-    AsyncStorage.setItem('booklist', JSON.stringify(booklist));
-  }
-
-  render() {
-    const menu = <Menu navigation={this.props.navigation} addBook={this.addBook} />;
-    return ((
-      <View style={styles.container}>
-        <StatusBar barStyle='light-content' />
-        <SideMenu
-          menu={menu}
-          isOpen={this.state.isOpen}
-          onChange={isOpen => this.updateMenuState(isOpen)}
-          menuPosition={'right'}
-          disableGestures={true}>
-          <BookList navigation={this.props.navigation} />
-        </SideMenu>
-      </View>
-    ));
-  }
-}
-
-class BookList extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    tha = this;
-
-    this.deleteBook = this.deleteBook.bind(this);
-    this.renderRow = this.renderRow.bind(this);
-    this.onRefresh = this.onRefresh.bind(this);
-    this.initx = this.initx.bind(this);
-    this.setRefreshComp = this.setRefreshComp.bind(this);
-
-    this.state = {
-      dataSource: '',
-    };
-    this.initx();
-  }
-
-  componentWillUnmount() {
-    //重写组件的setState方法，直接返回空
-    this.setState = (state, callback) => {
-      return;
-    };
-  }
-
-  async initx() {
-    const val = JSON.parse(await AsyncStorage.getItem('booklist'));
-    if (val === null || val.length === 0) {
-      booklist = [
-        {
-          bookName: '天醒之路',
-          author: '蝴蝶蓝',
-          img: 'http://www.xs.la/BookFiles/BookImages/64.jpg',
-          desc: '“路平，起床上课。”\n“再睡五分钟。”\n“给我起来！”\n哗！阳光洒下，照遍路平全身。\n“啊！！！”惊叫声顿时响彻云霄，将路平的睡意彻底击碎，之后已是苏唐摔门而出的怒吼：“什么条件啊你玩裸睡？！”\n......',
-          latestChapter: '第七百二十二章 堂皇而入',
-          plantformId: 1,
-          source: {
-            '1': 'http://www.xs.la/0_64/',
-            '2': 'http://www.kanshuzhong.com/book/36456/',
-          }
-        }, {
-          bookName: '飞剑问道',
-          author: '我吃西红柿',
-          img: 'http://www.xs.la/BookFiles/BookImages/feijianwendao.jpg',
-          desc: '修仙觅长生，热血任逍遥，踏莲曳波涤剑骨，凭虚御风塑圣魂！在这个世界，有狐仙、河神、水怪、大妖，也有求长生的修行者。修行者们，开法眼，可看妖魔鬼怪。炼一口飞剑，可千里杀敌。千里眼、顺风耳，更可探查四方。……秦府二公子‘秦云’，便是一位修行者……',
-          latestChapter: '待检测',
-          plantformId: 1,
-          source: {
-            '1': 'http://www.xs.la/34_34495/',
-            '2': 'http://www.kanshuzhong.com/book/118096/',
-          }
-        }
-      ];
-      alert('发现书架为空，自动添加书籍。');
-      AsyncStorage.setItem('booklist', JSON.stringify(booklist))
-    } else {
-      booklist = val;
-    }
-    refreshComp.refreshAuto();
-    this.setState({
-      dataSource: [...booklist],
-    });
   }
 
   deleteBook(deleteId) {
-    booklist.splice(deleteId, 1);
-    this.setState({
-      dataSource: [...booklist]
-    });
-    AsyncStorage.setItem('booklist', JSON.stringify(booklist));
+    this.props.dispatch(listDelete(deleteId));
   }
 
   renderRow(rowData, sectionID, rowID) {
@@ -185,67 +87,109 @@ class BookList extends React.PureComponent {
     return (
       <Swipeout
         right={[{
-          text: '删除',
+          component: (
+            <View style={{ flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+              <Icon
+                name='ios-trash-outline'
+                type='ionicon'
+                color='red'
+                size={24} />
+              <Text style={{ color: 'red', fontSize: 10 }}>删除</Text>
+            </View>
+          ),
           onPress: () => {
             this.deleteBook(rowID);
           },
-          backgroundColor: 'red'
+          backgroundColor: styles.rowStyle.backgroundColor,
+          color: 'red'
         }]}
         autoClose={true}
         sectionID={sectionID}
         close={!(this.state.sectionID === sectionID && this.state.rowID === rowID)}
-        backgroundColor={styles.container.backgroundColor}>
-        <TouchableOpacity
+        backgroundColor={styles.rowStyle.backgroundColor}>
+        <ListItem
+          containerStyle={styles.rowStyle}
+          hideChevron={true}
+          underlayColor='#eeeeee'
+          leftIcon={<Image source={{ uri: rowData.img }} style={styles.coverStyle} />}
+          title={<View style={{ flexDirection: 'row' }}>
+            <Text style={styles.titleStyle}>{rowData.bookName}</Text>
+            {rowData.isUpdate && <Badge value={`更新`} containerStyle={styles.badgeStyle} textStyle={{ fontSize: 11 }} />}
+          </View>}
+          subtitle={rowData.updateNum > 10 ? `距上次点击已更新${rowData.updateNum}章` : `${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}
+          subtitleStyle={styles.subTitleStyle}
           onLongPress={() => {
             navigate('BookDet', { book: rowData });
           }}
           onPress={() => {
             navigate('Read', { book: rowData });
-          }}>
-          <View style={{ height: 52 }}>
-            <Text style={styles.rowStyle}>
-              <Text style={{ fontSize: 15 }}>{rowData.bookName}</Text>
-              <Text style={styles.latestChapter}>{`    ${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}</Text>
-            </Text>
-          </View>
-        </TouchableOpacity>
+            setTimeout(() => {
+              this.props.dispatch(listRead(rowID))
+            }, 1000);
+          }} />
       </Swipeout >
-    );
+    )
   }
 
-  async onRefresh(PullRefresh) {
-    await getNet.refreshChapter(booklist);
-    this.setState({
-      dataSource: [...booklist]
-    }, () => {
-      AsyncStorage.setItem('booklist', JSON.stringify(booklist));
-      PullRefresh.onRefreshEnd();
-    });
+  onRefresh = () => {
+    if (this.props.isInit) {
+      this.props.dispatch(listUpdate(this.props.list))
+    } else {
+      setTimeout(() => {
+        this.props.isInit ? this.props.dispatch(listUpdate(this.props.list)) : this.onRefresh()
+      }, 521);
+    }
   }
 
-  setRefreshComp(that) {
-    refreshComp === undefined && (refreshComp = that);
+  addBook(data) {
+    this.props.dispatch(listAdd({
+      ...data,
+      latestChapter: '待检测',
+    }));
   }
 
   render() {
+    const menu = <Menu navigation={this.props.navigation} addBook={this.addBook} />;
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    return (
+    const { dispatch, list, loadingFlag, isInit } = this.props;
+    if (!isInit) return null;
+    return ((
       <View style={styles.container}>
-        <ListView
-          ref="list"
-          style={{ flex: 1 }}
-          renderScrollComponent={(props) => <PullRefreshScrollView
-            onRefresh={(PullRefresh) => this.onRefresh(PullRefresh)}
-            setRefreshComp={this.setRefreshComp}
-            color={styles.container.backgroundColor}
-            {...props} />}
-          enableEmptySections={true}
-          dataSource={ds.cloneWithRows(this.state.dataSource)}
-          renderSeparator={() => <View style={styles.solid} />}
-          renderRow={this.renderRow} />
+        <StatusBar barStyle='light-content' />
+        <SideMenu
+          menu={menu}
+          isOpen={this.props.menuFlag}
+          onChange={openFlag => dispatch(menuCtl(openFlag))}
+          menuPosition={'right'}
+          disableGestures={true}>
+          <View style={styles.container}>
+            <ListView
+              style={{ flex: 1 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={loadingFlag}
+                  onRefresh={this.onRefresh}
+                  title="Loading..."
+                  titleColor="#000" />}
+              enableEmptySections={true}
+              dataSource={ds.cloneWithRows(list)}
+              renderSeparator={() => <View style={styles.solid} />}
+              renderRow={this.renderRow} />
+          </View>
+        </SideMenu>
       </View>
-    );
+    ));
   }
 }
 
-export default BookPackage;
+function select(state) {
+  return {
+    list: state.list.list,
+    isInit: state.list.isInit,
+    menuFlag: state.app.menuFlag,
+    loadingFlag: state.list.loadingFlag,
+    operationNum: state.list.operationNum,
+  }
+}
+
+export default connect(select)(BookPackage);

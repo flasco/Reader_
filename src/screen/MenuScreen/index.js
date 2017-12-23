@@ -25,9 +25,7 @@ class Menu extends React.PureComponent {
   }
 
   async CleanData() {
-    let listStr = await AsyncStorage.getItem('booklist');
     await AsyncStorage.clear();
-    await AsyncStorage.setItem('booklist', listStr);
     alert('除书架记录之外的数据已经全部清空');
   }
 
@@ -35,9 +33,7 @@ class Menu extends React.PureComponent {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.menu}>
-        <TouchableOpacity onPress={() =>
-          navigate('Sear', { addBook: this.props.addBook })
-        }>
+        <TouchableOpacity onPress={() => navigate('Sear', { addBook: this.props.addBook })}>
           <Text style={styles.item} >Search</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => { navigate('RnkL', { addBook: this.props.addBook }); }}>
