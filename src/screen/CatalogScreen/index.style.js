@@ -18,7 +18,7 @@ export default {
     marginRight: 20
   },
   red: {
-    color: '#AF3E28'
+    color: '#db0019'
   },
   gDwn: {
     color: '#fff'

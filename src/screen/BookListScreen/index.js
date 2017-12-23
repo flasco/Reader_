@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
-import { Text, View, ListView, TouchableOpacity, StatusBar, AsyncStorage, RefreshControl } from 'react-native';
-
+import { Text, View, ListView, TouchableOpacity, StatusBar, AsyncStorage, RefreshControl, Image, AppState, AppStateIOS } from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import { Icon } from 'react-native-elements';
+import { Icon, ListItem, Badge } from 'react-native-elements';
 import SideMenu from 'react-native-side-menu';
 import SplashScreen from 'react-native-splash-screen';
 
 import { connect } from 'react-redux';
 
-import { listAdd, listDelete, listUpdate, listInit, listRead } from '../../actions/list'
+import { listAdd, listDelete, listUpdate, listInit, listRead, OperationClear } from '../../actions/list'
 import { menuCtl, menuSwitch } from '../../actions/app';
 
 import Menu from '../MenuScreen';
 import styles from './index.style';
-import getNet from '../../util/getNet';
-import PullRefreshScrollView from '../../component/RefreshScollowView/index';
 
 let tht;
 
@@ -58,7 +55,13 @@ class BookPackage extends React.Component {
     this.addBook = this.addBook.bind(this);
     this.deleteBook = this.deleteBook.bind(this);
     this.renderRow = this.renderRow.bind(this);
-
+    AppState.addEventListener('change', async (e) => {
+      if (e === 'inactive' && this.props.operationNum > 0) {
+        this.props.dispatch(OperationClear())
+        await AsyncStorage.setItem('booklist', JSON.stringify(this.props.list))
+        // console.log('store success')
+      }
+    });
     props.dispatch(listInit());
   }
 
@@ -66,7 +69,7 @@ class BookPackage extends React.Component {
     setTimeout(() => {
       SplashScreen.hide();
     }, 2000);
-    this.onRefresh();
+    // this.onRefresh();
   }
 
   componentWillUnmount() {
@@ -84,17 +87,37 @@ class BookPackage extends React.Component {
     return (
       <Swipeout
         right={[{
-          text: '删除',
+          component: (
+            <View style={{ flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+              <Icon
+                name='ios-trash-outline'
+                type='ionicon'
+                color='red'
+                size={24} />
+              <Text style={{ color: 'red', fontSize: 10 }}>删除</Text>
+            </View>
+          ),
           onPress: () => {
             this.deleteBook(rowID);
           },
-          backgroundColor: 'red'
+          backgroundColor: styles.rowStyle.backgroundColor,
+          color: 'red'
         }]}
         autoClose={true}
         sectionID={sectionID}
         close={!(this.state.sectionID === sectionID && this.state.rowID === rowID)}
-        backgroundColor={styles.container.backgroundColor}>
-        <TouchableOpacity
+        backgroundColor={styles.rowStyle.backgroundColor}>
+        <ListItem
+          containerStyle={styles.rowStyle}
+          hideChevron={true}
+          underlayColor='#eeeeee'
+          leftIcon={<Image source={{ uri: rowData.img }} style={styles.coverStyle} />}
+          title={<View style={{ flexDirection: 'row' }}>
+            <Text style={styles.titleStyle}>{rowData.bookName}</Text>
+            {rowData.isUpdate && <Badge value={`更新`} containerStyle={styles.badgeStyle} textStyle={{ fontSize: 11 }} />}
+          </View>}
+          subtitle={rowData.updateNum > 10 ? `距上次点击已更新${rowData.updateNum}章` : `${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}
+          subtitleStyle={styles.subTitleStyle}
           onLongPress={() => {
             navigate('BookDet', { book: rowData });
           }}
@@ -103,25 +126,22 @@ class BookPackage extends React.Component {
             setTimeout(() => {
               this.props.dispatch(listRead(rowID))
             }, 1000);
-          }}>
-          <View style={{ height: 52 }}>
-            <Text style={styles.rowStyle}>
-              <Text style={{ fontSize: 15 }}>{rowData.bookName}</Text>
-              <Text style={styles.latestChapter}>{`    ${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}</Text>
-            </Text>
-          </View>
-        </TouchableOpacity>
+          }} />
       </Swipeout >
-    );
+    )
   }
 
   onRefresh = () => {
-    setTimeout(() => {
-      this.props.isInit ? this.props.dispatch(listUpdate(this.props.list)) : this.onRefresh()
-    }, 521);
+    if (this.props.isInit) {
+      this.props.dispatch(listUpdate(this.props.list))
+    } else {
+      setTimeout(() => {
+        this.props.isInit ? this.props.dispatch(listUpdate(this.props.list)) : this.onRefresh()
+      }, 521);
+    }
   }
 
-  async addBook(data) {
+  addBook(data) {
     this.props.dispatch(listAdd({
       ...data,
       latestChapter: '待检测',
@@ -167,7 +187,8 @@ function select(state) {
     list: state.list.list,
     isInit: state.list.isInit,
     menuFlag: state.app.menuFlag,
-    loadingFlag: state.list.loadingFlag
+    loadingFlag: state.list.loadingFlag,
+    operationNum: state.list.operationNum,
   }
 }
 

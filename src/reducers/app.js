@@ -17,7 +17,6 @@ export default app = (state = appState, action) => {
       return Object.assign({}, state, { menuFlag: action.flag })
     case MENU_SWITCH:
       let flag1 = !state.menuFlag;
-      console.log(flag1);
       return Object.assign({}, state, { menuFlag: flag1 })
     case NIGHTMODE_SWITCH:
       let flag2 = !state.nightMode;

@@ -13,3 +13,6 @@ export const NIGHTMODE_SWITCH = 'NIGHTMODE_SWITCH';
 
 export const LOADING_CTL = 'LOADING_CTL';
 
+export const FETCH_FAILED = 'FETCH_FAILED';
+
+export const OPERATION_CLEAR = 'OPERATION_CLEAR';

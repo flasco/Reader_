@@ -4,7 +4,9 @@ import {
   LIST_UPDATE,
   LIST_READ,
   LIST_INIT,
-  LOADING_CTL
+  LOADING_CTL,
+  FETCH_FAILED,
+  OPERATION_CLEAR
 } from './actionTypes';
 
 import getNet from '../util/getNet'
@@ -16,7 +18,6 @@ export function listInit() {
     return AsyncStorage.getItem('booklist')
       .then(booklist => JSON.parse(booklist))
       .then(list => {
-        list.filter(x => x.latestChapter = '没有');
         dispatch(receivelistInit(list))
       })
   }
@@ -32,6 +33,10 @@ export function listAdd(book) {
     return getNet.refreshSingleChapter(book)
       .then(latestBook => dispatch(receiveAddFetch(latestBook)))
   }
+}
+
+export function OperationClear() {
+  return { type: OPERATION_CLEAR }
 }
 
 function requestFetch(type = 'NULL') {
@@ -55,9 +60,15 @@ export function listUpdate(list) {
     dispatch(loadingCrl(true));
     return getNet.refreshChapter(list)
       .then(latestInfo => {
-        dispatch(receiveUpdateFetch(latestInfo))
+        dispatch(receiveUpdateFetch(latestInfo));
+      }).catch(err => {
+        dispatch(fetchFailed('request timeout.'))
       })
   }
+}
+
+function fetchFailed(message) {
+  return { type: FETCH_FAILED, message }
 }
 
 function receiveUpdateFetch(info) {

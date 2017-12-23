@@ -28,8 +28,12 @@ export default {
     },
     firstButton: {
       text: { color: '#dd0007', },
+      disText: { color: '#ddd' },
       buttonStyle: {
         backgroundColor: 'transparent', borderRadius: 4, borderColor: '#dd0007', borderWidth: 1, width: 160, height: 40
+      },
+      disabledStyle: {
+        backgroundColor: '#808080', borderRadius: 4, borderColor: '#808080', borderWidth: 1, width: 160, height: 40
       }
     },
     secondButton: {
