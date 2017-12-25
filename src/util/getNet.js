@@ -37,7 +37,10 @@ export default class getNet {
          * 当书籍为未检测的时候不满足条件，num = 0，
          * 但是考虑到一开始添加书籍的时候就不应该显示更新这个状态，所以就这样~
          */
-        data[i].title === tit && (num = length - i - 1)
+        if(data[i].title === latech){
+          num = length - i - 1;
+          break;
+        }
       }
       AsyncStorage.setItem(bookChapterLst, JSON.stringify(data));
       return { title: tit, num };

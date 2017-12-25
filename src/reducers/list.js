@@ -12,6 +12,8 @@ import {
   OPERATION_CLEAR
 } from '../actions/actionTypes';
 
+import { insertionSort } from '../util/sort'
+
 export const listState = {
   loadingFlag: false,
   isInit: false,
@@ -44,6 +46,7 @@ export default list = (state = listState, action) => {
     case LIST_INIT:
       if (action.list && action.list.length > 0) {
         action.list.filter(x => x.latestRead === undefined && (x.latestRead = 0));
+        // console.log(action.list)
         return Object.assign({}, state, { list: action.list, isInit: true });
       } else {
         return Object.assign({}, state, { isInit: true });
@@ -59,8 +62,8 @@ export default list = (state = listState, action) => {
       state.operationNum++;
       state.list[action.bookId].isUpdate = false; //阅读开始 清空检测到的更新。
       state.list[action.bookId].updateNum = 0;
-      state.list[action.bookId].latestRead = new Date().getTime();
-      state.list.sort((a, b) => a.latestRead < b.latestRead);
+      state.list[action.bookId].latestRead = new Date().getTime()
+      insertionSort(state.list)
       return Object.assign({}, state, { list: [...state.list] });
     case LIST_DELETE:
       state.operationNum++;
@@ -71,13 +74,15 @@ export default list = (state = listState, action) => {
         if (x !== undefined) {
           state.operationNum++;
           let updateNum = state.list[index].updateNum + x.num; //记录之前的更新章节
+          console.log(x);
           state.list[index].latestChapter = x.title;
           state.list[index].isUpdate = updateNum > 0;
           state.list[index].updateNum = updateNum;
+          
         }
       });
       state.loadingFlag = false;
-      return Object.assign({}, state);
+      return Object.assign({}, state, { list: [...state.list] });
     default:
       return state;
   }

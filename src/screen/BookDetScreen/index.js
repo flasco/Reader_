@@ -44,7 +44,7 @@ class BookDetScreen extends React.PureComponent {
 
     this.state = {
       isLoading: this.book === undefined,
-      contains: true,
+      contains: this.book !== undefined && this.isContains(this.book),
     }
     this.initx = this.initx.bind(this);
 
@@ -55,7 +55,7 @@ class BookDetScreen extends React.PureComponent {
     if (this.state.isLoading) {
       let name = this.props.navigation.state.params.bookNam,
         author = this.props.navigation.state.params.bookAut;
-      const { data } = await search(name, author, 1);
+      const { data } = await search(name, author);
       this.book = data[0];
       if (this.book === undefined) {
         alert('本书没有记录！如果迫切需要加入本书，请及时反馈给开发人员~');
@@ -70,8 +70,8 @@ class BookDetScreen extends React.PureComponent {
 
   isContains = (book) => {
     return this.props.list.filter(x => {
-      return x.source[1] === book.source[1]
-    }).length > 0;
+      return x.source === book.source
+    }).length  > 0;
   }
 
   render() {
@@ -109,6 +109,7 @@ class BookDetScreen extends React.PureComponent {
               buttonStyle={styles.secondView.firstButton.buttonStyle} />
             <Button title='开始阅读'
               onPress={() => {
+                console.log(this.book)
                 navigate('Read', {
                   book: this.book
                 });

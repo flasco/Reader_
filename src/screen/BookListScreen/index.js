@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, ListView, TouchableOpacity, StatusBar, AsyncStorage, RefreshControl, Image, AppState, AppStateIOS } from 'react-native';
+import { Text, View, ListView, TouchableOpacity, TouchableHighlight, StatusBar, AsyncStorage, RefreshControl, Image, AppState, AppStateIOS } from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import { Icon, ListItem, Badge } from 'react-native-elements';
+import { Icon, Badge } from 'react-native-elements';
 import SideMenu from 'react-native-side-menu';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -15,7 +15,58 @@ import styles from './index.style';
 
 let tht;
 
-class BookPackage extends React.Component {
+class ListRow extends React.Component {
+  render() {
+    const { rowData, navigate, rowID } = this.props;
+    return (
+      <Swipeout
+        right={[{
+          component: (
+            <View style={{ flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+              <Icon
+                name='ios-trash-outline'
+                type='ionicon'
+                color='red'
+                size={24} />
+              <Text style={{ color: 'red', fontSize: 10 }}>删除</Text>
+            </View>
+          ),
+          onPress: () => {
+            this.props.deleteBook(rowID);
+          },
+          backgroundColor: styles.rowStyle.backgroundColor,
+          color: 'red'
+        }]}
+        backgroundColor={styles.rowStyle.backgroundColor}>
+        <TouchableHighlight style={styles.rowStyle}
+          underlayColor='#eeeeee'
+          activeOpacity={0.7}
+          onLongPress={() => {
+            navigate('BookDet', { book: rowData });
+          }}
+          onPress={() => {
+            navigate('Read', { book: rowData });
+            setTimeout(() => {
+              tht.props.dispatch(listRead(rowID))
+            }, 1000);
+          }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Image source={{ uri: rowData.img }} style={styles.coverStyle} />
+            <View style={{ paddingLeft: 15 }}>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.titleStyle}>{rowData.bookName}</Text>
+                {rowData.isUpdate && <Badge value={`更新`} containerStyle={styles.badgeStyle} textStyle={{ fontSize: 11 }} />}
+              </View>
+              <Text style={styles.subTitleStyle}>{rowData.updateNum > 10 ? `距上次点击已更新${rowData.updateNum}章` : `${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}</Text>
+            </View>
+          </View>
+        </TouchableHighlight>
+      </Swipeout >
+    );
+  }
+}
+
+class BookPackage extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '古意流苏',
@@ -59,7 +110,6 @@ class BookPackage extends React.Component {
       if (e === 'inactive' && this.props.operationNum > 0) {
         this.props.dispatch(OperationClear())
         await AsyncStorage.setItem('booklist', JSON.stringify(this.props.list))
-        // console.log('store success')
       }
     });
     props.dispatch(listInit());
@@ -69,7 +119,7 @@ class BookPackage extends React.Component {
     setTimeout(() => {
       SplashScreen.hide();
     }, 2000);
-    // this.onRefresh();
+    this.onRefresh();
   }
 
   componentWillUnmount() {
@@ -85,49 +135,7 @@ class BookPackage extends React.Component {
   renderRow(rowData, sectionID, rowID) {
     const { navigate } = this.props.navigation;
     return (
-      <Swipeout
-        right={[{
-          component: (
-            <View style={{ flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-              <Icon
-                name='ios-trash-outline'
-                type='ionicon'
-                color='red'
-                size={24} />
-              <Text style={{ color: 'red', fontSize: 10 }}>删除</Text>
-            </View>
-          ),
-          onPress: () => {
-            this.deleteBook(rowID);
-          },
-          backgroundColor: styles.rowStyle.backgroundColor,
-          color: 'red'
-        }]}
-        autoClose={true}
-        sectionID={sectionID}
-        close={!(this.state.sectionID === sectionID && this.state.rowID === rowID)}
-        backgroundColor={styles.rowStyle.backgroundColor}>
-        <ListItem
-          containerStyle={styles.rowStyle}
-          hideChevron={true}
-          underlayColor='#eeeeee'
-          leftIcon={<Image source={{ uri: rowData.img }} style={styles.coverStyle} />}
-          title={<View style={{ flexDirection: 'row' }}>
-            <Text style={styles.titleStyle}>{rowData.bookName}</Text>
-            {rowData.isUpdate && <Badge value={`更新`} containerStyle={styles.badgeStyle} textStyle={{ fontSize: 11 }} />}
-          </View>}
-          subtitle={rowData.updateNum > 10 ? `距上次点击已更新${rowData.updateNum}章` : `${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}
-          subtitleStyle={styles.subTitleStyle}
-          onLongPress={() => {
-            navigate('BookDet', { book: rowData });
-          }}
-          onPress={() => {
-            navigate('Read', { book: rowData });
-            setTimeout(() => {
-              this.props.dispatch(listRead(rowID))
-            }, 1000);
-          }} />
-      </Swipeout >
+      <ListRow rowData={rowData} rowID={rowID} navigate={navigate} deleteBook={this.deleteBook} />
     )
   }
 

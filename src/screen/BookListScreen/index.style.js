@@ -5,12 +5,12 @@ export default {
   },
   rowStyle: {
     height: 71,
-    borderBottomWidth: 0,
+    paddingLeft:10,
+    paddingTop:10,
     backgroundColor: '#f2f2f2'
   },
   titleStyle: {
     fontSize: 15,
-    paddingLeft: 15,
     paddingBottom: 12,
     marginRight:4,
     fontWeight: '400',
@@ -23,11 +23,9 @@ export default {
     height: 51
   },
   subTitleStyle: {
-    paddingLeft: 15,
     fontSize: 12,
     color: '#999999',
     fontWeight: '100',
-
   },
   solid: {
     height: 1,
