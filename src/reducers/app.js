@@ -1,13 +1,13 @@
 import {
   MENU_CTL,
   MENU_SWITCH,
-  NIGHTMODE_SWITCH,
+  SUNNYMODE_SWITCH,
 } from '../actions/actionTypes';
 
 
 export const appState = {
   menuFlag: false,
-  nightMode: false,
+  sunnyMode: true,
 }
 
 
@@ -18,9 +18,9 @@ export default app = (state = appState, action) => {
     case MENU_SWITCH:
       let flag1 = !state.menuFlag;
       return Object.assign({}, state, { menuFlag: flag1 })
-    case NIGHTMODE_SWITCH:
-      let flag2 = !state.nightMode;
-      return Object.assign({}, state, { nightMode: flag2 })
+    case SUNNYMODE_SWITCH:
+      let flag2 = !state.sunnyMode;
+      return Object.assign({}, state, { sunnyMode: flag2 })
     default:
       return state;
   }

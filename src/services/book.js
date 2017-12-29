@@ -22,13 +22,13 @@ export async function list(url) {
 }
 
 export async function rnk(page) {
-  return await axios.get(`${ServerIp}/rnklist?p=${page}`);
+  return await axios.get(`${ServerIp}/rnklist?p=${page}`,{timeout: 5000});
 }
 
 export async function stay(hour = 6) {
-  return await axios.get(`${ServerIp}/start?h=${hour}`);
+  return await axios.get(`${ServerIp}/start?h=${hour}`,{timeout: 5000});
 }
 
 export async function search(name,author = '',pid = '') {
-  return await axios.get(`${StorageIp}/sear?name=${name}&aut=${author}&pid=${pid}`);
+  return await axios.get(`${StorageIp}/sear?name=${name}&aut=${author}&pid=${pid}`,{timeout: 5000});
 }

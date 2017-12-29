@@ -4,15 +4,6 @@ export default {
     textAlign: 'center',
     fontSize: 18,
   },
-  SunnyMode_container: {
-    backgroundColor: '#acc7a7',
-  },
-  MoonMode_container: {
-    backgroundColor: '#0F0F0F',
-  },
-  MoonMode_text: {
-    color: '#595959',
-  },
   cancel: {
     height: 36,
     fontSize: 18,
@@ -29,13 +20,13 @@ export default {
     color: '#0d2a0f',
   },
   MoonMode_container: {
-    backgroundColor: '#0F0F0F',
+    backgroundColor: '#0c0c0c',
   },
   MoonMode_Title: {
     color: '#474747',
   },
   MoonMode_text: {
-    color: '#595959',
+    color: '#5b5b5b',
   },
   MoonMode_Bottom: {
     color: '#424242',

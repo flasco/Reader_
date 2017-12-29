@@ -109,7 +109,6 @@ class BookDetScreen extends React.PureComponent {
               buttonStyle={styles.secondView.firstButton.buttonStyle} />
             <Button title='开始阅读'
               onPress={() => {
-                console.log(this.book)
                 navigate('Read', {
                   book: this.book
                 });

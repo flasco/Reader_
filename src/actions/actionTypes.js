@@ -9,7 +9,7 @@ export const FETCH = 'FETCH';
 export const MENU_SWITCH = 'MENU_SWITCH';
 export const MENU_CTL = 'MENU_CTL';
 
-export const NIGHTMODE_SWITCH = 'NIGHTMODE_SWITCH';
+export const SUNNYMODE_SWITCH = 'SUNNYMODE_SWITCH';
 
 export const LOADING_CTL = 'LOADING_CTL';
 

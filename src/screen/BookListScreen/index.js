@@ -17,7 +17,7 @@ let tht;
 
 class ListRow extends React.Component {
   render() {
-    const { rowData, navigate, rowID } = this.props;
+    const { rowData, navigate, rowID, SMode } = this.props;
     return (
       <Swipeout
         right={[{
@@ -34,12 +34,12 @@ class ListRow extends React.Component {
           onPress: () => {
             this.props.deleteBook(rowID);
           },
-          backgroundColor: styles.rowStyle.backgroundColor,
+          backgroundColor: SMode ? styles.sunnyMode.rowStyle.backgroundColor : styles.nightMode.rowStyle.backgroundColor,
           color: 'red'
         }]}
-        backgroundColor={styles.rowStyle.backgroundColor}>
-        <TouchableHighlight style={styles.rowStyle}
-          underlayColor='#eeeeee'
+        backgroundColor={SMode ? styles.sunnyMode.rowStyle.backgroundColor : styles.nightMode.rowStyle.backgroundColor}>
+        <TouchableHighlight style={SMode ? styles.sunnyMode.rowStyle : styles.nightMode.rowStyle}
+          underlayColor={SMode ? styles.sunnyMode.underlayColor : styles.nightMode.underlayColor}
           activeOpacity={0.7}
           onLongPress={() => {
             navigate('BookDet', { book: rowData });
@@ -54,10 +54,10 @@ class ListRow extends React.Component {
             <Image source={{ uri: rowData.img }} style={styles.coverStyle} />
             <View style={{ paddingLeft: 15 }}>
               <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.titleStyle}>{rowData.bookName}</Text>
-                {rowData.isUpdate && <Badge value={`更新`} containerStyle={styles.badgeStyle} textStyle={{ fontSize: 11 }} />}
+                <Text style={SMode ? styles.sunnyMode.titleStyle : styles.nightMode.titleStyle}>{rowData.bookName}</Text>
+                {rowData.isUpdate && <Badge value={`更新`} containerStyle={SMode ? styles.sunnyMode.badgeStyle : styles.nightMode.badgeStyle} textStyle={{ fontSize: 11 }} />}
               </View>
-              <Text style={styles.subTitleStyle}>{rowData.updateNum > 10 ? `距上次点击已更新${rowData.updateNum}章` : `${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}</Text>
+              <Text style={SMode ? styles.sunnyMode.subTitleStyle : styles.nightMode.subTitleStyle}>{rowData.updateNum > 10 ? `距上次点击已更新${rowData.updateNum}章` : `${rowData.latestChapter.length > 15 ? (rowData.latestChapter.substr(0, 15) + '...') : rowData.latestChapter}`}</Text>
             </View>
           </View>
         </TouchableHighlight>
@@ -102,7 +102,6 @@ class BookPackage extends React.PureComponent {
       isOpen: false,
       dataSource: '',
     };
-
     this.addBook = this.addBook.bind(this);
     this.deleteBook = this.deleteBook.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -135,7 +134,7 @@ class BookPackage extends React.PureComponent {
   renderRow(rowData, sectionID, rowID) {
     const { navigate } = this.props.navigation;
     return (
-      <ListRow rowData={rowData} rowID={rowID} navigate={navigate} deleteBook={this.deleteBook} />
+      <ListRow rowData={rowData} rowID={rowID} SMode={this.props.SMode} navigate={navigate} deleteBook={this.deleteBook} />
     )
   }
 
@@ -159,10 +158,10 @@ class BookPackage extends React.PureComponent {
   render() {
     const menu = <Menu navigation={this.props.navigation} addBook={this.addBook} />;
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    const { dispatch, list, loadingFlag, isInit } = this.props;
+    const { dispatch, list, loadingFlag, isInit, SMode } = this.props;
     if (!isInit) return null;
     return ((
-      <View style={styles.container}>
+      <View style={SMode ? styles.sunnyMode.container : styles.nightMode.container}>
         <StatusBar barStyle='light-content' />
         <SideMenu
           menu={menu}
@@ -170,7 +169,7 @@ class BookPackage extends React.PureComponent {
           onChange={openFlag => dispatch(menuCtl(openFlag))}
           menuPosition={'right'}
           disableGestures={true}>
-          <View style={styles.container}>
+          <View style={SMode ? styles.sunnyMode.container : styles.nightMode.container}>
             <ListView
               style={{ flex: 1 }}
               refreshControl={
@@ -178,10 +177,10 @@ class BookPackage extends React.PureComponent {
                   refreshing={loadingFlag}
                   onRefresh={this.onRefresh}
                   title="Loading..."
-                  titleColor="#000" />}
+                  titleColor={SMode ? styles.sunnyMode.loadingColor : styles.nightMode.loadingColor} />}
               enableEmptySections={true}
               dataSource={ds.cloneWithRows(list)}
-              renderSeparator={() => <View style={styles.solid} />}
+              renderSeparator={() => <View style={SMode ? styles.sunnyMode.solid : styles.nightMode.solid} />}
               renderRow={this.renderRow} />
           </View>
         </SideMenu>
@@ -197,6 +196,7 @@ function select(state) {
     menuFlag: state.app.menuFlag,
     loadingFlag: state.list.loadingFlag,
     operationNum: state.list.operationNum,
+    SMode: state.app.sunnyMode,
   }
 }
 
