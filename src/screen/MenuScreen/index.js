@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, AsyncStorage, TouchableWithoutFeedback, Linking } from 'react-native';
 import React from 'react';
 
-import { stay } from '../../services/book';
+import { changeServer } from '../../services/book';
+
 import styles from './index.style';
 const window = Dimensions.get('window');
 
@@ -19,9 +20,8 @@ class Menu extends React.PureComponent {
     };
   }
 
-  async leanMore() {
-    let str = '服务器开启从每日早上7点至凌晨1点，想在不开的时间段继续看书请注意手动缓存~';
-    alert(str);
+  leanMore() {
+    changeServer();
   }
 
   async CleanData() {
@@ -40,7 +40,7 @@ class Menu extends React.PureComponent {
           <Text style={styles.item} >RankList</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={this.leanMore}>
-          <Text style={styles.item} >Server Open Time</Text>
+          <Text style={styles.item} >Server line Change</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={this.CleanData}>
           <Text style={styles.item} >CleanAllData</Text>

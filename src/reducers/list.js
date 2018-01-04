@@ -1,6 +1,3 @@
-/**
-* 这里以news的为例，还有其他的reducer，具体的可以参考样例完整代码
-*/
 import {
   LIST_ADD,
   LIST_READ,
@@ -11,6 +8,8 @@ import {
   FETCH_FAILED,
   OPERATION_CLEAR
 } from '../actions/actionTypes';
+
+import { insertionSort } from '../util/sort'
 
 export const listState = {
   loadingFlag: false,
@@ -49,7 +48,7 @@ export default list = (state = listState, action) => {
         return Object.assign({}, state, { isInit: true });
       }
     case LIST_ADD:
-      state.list.push(action.book);
+      state.list.unshift(action.book);
       state.operationNum++;
       return Object.assign({}, state, { list: [...state.list] });
     case FETCH_FAILED:
@@ -59,8 +58,8 @@ export default list = (state = listState, action) => {
       state.operationNum++;
       state.list[action.bookId].isUpdate = false; //阅读开始 清空检测到的更新。
       state.list[action.bookId].updateNum = 0;
-      state.list[action.bookId].latestRead = new Date().getTime();
-      state.list.sort((a, b) => a.latestRead < b.latestRead);
+      state.list[action.bookId].latestRead = new Date().getTime()
+      insertionSort(state.list)
       return Object.assign({}, state, { list: [...state.list] });
     case LIST_DELETE:
       state.operationNum++;
@@ -77,7 +76,7 @@ export default list = (state = listState, action) => {
         }
       });
       state.loadingFlag = false;
-      return Object.assign({}, state);
+      return Object.assign({}, state, { list: [...state.list] });
     default:
       return state;
   }

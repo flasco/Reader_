@@ -1,7 +1,7 @@
 import {
   MENU_CTL,
   MENU_SWITCH,
-  NIGHTMODE_SWITCH,
+  SUNNYMODE_SWITCH,
   LOADING_SWITCH
 } from './actionTypes';
 
@@ -13,8 +13,8 @@ export function menuCtl(flag) {
   return { type: MENU_CTL, flag }
 }
 
-export function nightModeSwitch() {
-  return { type: NIGHTMODE_SWITCH }
+export function sunnyModeSwitch() {
+  return { type: SUNNYMODE_SWITCH }
 }
 
 export function LoadingSwitch() {

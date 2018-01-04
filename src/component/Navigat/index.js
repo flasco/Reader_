@@ -41,11 +41,11 @@ export default class Navigat extends React.PureComponent {
         <View style={styles.Navig}>
           <HeaderBackButton
             title='返回'
-            tintColor={'#ddd'}
+            tintColor={'#fff'}
             onPress={() => {
               this.props.navigation.goBack();
             }} />
-            <Text style={{color:'#ddd',fontSize:17,bottom:13,right:24,position:'absolute'}}
+            <Text style={{color:'#fff',fontSize:17,bottom:13,right:24,position:'absolute'}}
               onPress={()=>{
                 alert('should jmp');
               }}>换源</Text>
@@ -58,7 +58,7 @@ export default class Navigat extends React.PureComponent {
             <Icon
               name="burst"
               size={20}
-              color={'#ddd'}
+              color={'#aaa'}
               style={styles.fontCenter} />
             <Text style={styles.FotterItems}>切换</Text>
           </TouchableOpacity>
@@ -66,7 +66,7 @@ export default class Navigat extends React.PureComponent {
             <Icon
               name="list"
               size={20}
-              color={'#ddd'}
+              color={'#aaa'}
               style={styles.fontCenter} />
             <Text style={styles.FotterItems}>目录</Text>
           </TouchableOpacity>
@@ -74,7 +74,7 @@ export default class Navigat extends React.PureComponent {
             <Icon
               name="download"
               size={20}
-              color={'#ddd'}
+              color={'#aaa'}
               style={styles.fontCenter} />
             <Text style={styles.FotterItems}>缓存</Text>
           </TouchableOpacity>
@@ -82,7 +82,7 @@ export default class Navigat extends React.PureComponent {
             <Icon
               name="widget"
               size={20}
-              color={'#ddd'}
+              color={'#aaa'}
               style={styles.fontCenter} />
             <Text style={styles.FotterItems}>设置</Text>
           </TouchableOpacity>

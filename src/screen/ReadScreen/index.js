@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, Dimensions, StatusBar, InteractionManager, ActionSheetIOS, LayoutAnimation, AsyncStorage } from 'react-native';
+import { Text, View, Dimensions, StatusBar, InteractionManager, 
+  ActionSheetIOS, LayoutAnimation, AsyncStorage,AppState } from 'react-native';
 
 
-import dateFormat from 'dateformat';
 import async from 'async';
+import dateFormat from 'dateformat';
+import { connect } from 'react-redux';
 
 import Toast from '../../component/Toast';
 import ViewPager from '../../component/viewPager';
@@ -12,6 +14,8 @@ import Navigat from '../../component/Navigat';
 import { content, list } from '../../services/book';
 
 import styles from './index.style';
+
+import { sunnyModeSwitch } from '../../actions/app';
 
 /**
  * 下载模块
@@ -73,9 +77,6 @@ class ReadScreen extends React.PureComponent {
     super(props);
     tht = this;
     totalPage = 0;//总的页数
-    this.chapterMap;
-    this.chapterLst;
-    this.bookRecord;
     this.currentBook = props.navigation.state.params.book;
 
     this.state = {
@@ -83,7 +84,6 @@ class ReadScreen extends React.PureComponent {
       currentItem: '', //作为章节内容的主要获取来源。
       isVisible: false, //判断导航栏是否应该隐藏
       goFlag: 0, //判断是前往上一章（-1）还是下一章（1）
-      SMode: true,
     };
 
     this.initConf = this.initConf.bind(this);
@@ -94,41 +94,35 @@ class ReadScreen extends React.PureComponent {
     this.getNextPage = this.getNextPage.bind(this);
     this.getPrevPage = this.getPrevPage.bind(this);
     this.clickBoard = this.clickBoard.bind(this);
-    this.SModeChange = this.SModeChange.bind(this);
     this.getChapterUrl = this.getChapterUrl.bind(this);
     this.getCurrentPage = this.getCurrentPage.bind(this);
     this.cacheLoad = this.cacheLoad.bind(this);
 
     this.initConf();
-
+    
   }
 
   componentWillUnmount() {
-    //重写组件的setState方法，直接返回空
     this.setState = (state, callback) => {
       return;
     };
   }
-  
+
   async initConf() {
     bookRecordFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_record`;
     chapterLstFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_list`;
     bookMapFlag = `${this.currentBook.bookName}_${this.currentBook.plantformId}_map`;
 
-    const tm = await AsyncStorage.multiGet(['SMode', bookRecordFlag, chapterLstFlag, bookMapFlag])
-    this.chapterLst = tm[2][1] !== null ? JSON.parse(tm[2][1]) : [];
-    this.chapterMap = tm[3][1] !== null ? JSON.parse(tm[3][1]) : new Map();
+    const tm = await AsyncStorage.multiGet([ bookRecordFlag, chapterLstFlag, bookMapFlag])
+    this.chapterLst = tm[1][1] !== null ? JSON.parse(tm[1][1]) : [];
+    this.chapterMap = tm[2][1] !== null ? JSON.parse(tm[2][1]) : new Map();
     if (this.chapterLst.length !== 0) {
-      this.bookRecord = tm[1][1] !== null ? JSON.parse(tm[1][1]) : { recordChapterNum: 0, recordPage: 1 };
+      this.bookRecord = tm[0][1] !== null ? JSON.parse(tm[0][1]) : { recordChapterNum: 0, recordPage: 1 };
     }
-
-    this.setState({
-      SMode: tm[0][1] ? JSON.parse(tm[0][1]) : true,
-    });
 
     if (this.chapterLst.length === 0) {
       this.refs.toast.show('章节内容缺失，正在抓取中...');
-      this.chapterLst = await list(this.currentBook.source[1]);
+      this.chapterLst = await list(this.currentBook.source[this.currentBook.plantformId]);
       this.bookRecord = { recordChapterNum: 0, recordPage: 1 };
       AsyncStorage.setItem(chapterLstFlag, JSON.stringify(this.chapterLst));
     }
@@ -141,7 +135,7 @@ class ReadScreen extends React.PureComponent {
   async download_Chapter(size) {
     const i = this.bookRecord.recordChapterNum, j = this.chapterLst.length;
 
-    const End = i+size < j? i+size:j;
+    const End = i + size < j ? i + size : j;
     allTask = End - i;
     for (let n = i; n < End; n++) {
       q.push(this.chapterLst[n].key);
@@ -156,28 +150,26 @@ class ReadScreen extends React.PureComponent {
         'Cancel',
       ],
       cancelButtonIndex: 2,
-    },
-      (buttonIndex) => {
-        switch (buttonIndex) {
-          case 0: {//50章
-            this.download_Chapter(50); break;
-          }
-          case 1: {//150章
-            this.download_Chapter(150); break;
-          }
+    }, (buttonIndex) => {
+      switch (buttonIndex) {
+        case 0: {//50章
+          this.download_Chapter(50); break;
         }
-      });
+        case 1: {//150章
+          this.download_Chapter(150); break;
+        }
+      }
+    });
   }
 
   renderPage(data, pageID) {
     return (
       <Readitems
         title={this.state.currentItem.title}
-        SMode={this.state.SMode}
+        SMode={this.props.SMode}
         data={data}
         presPag={Number(pageID) + 1}
-        totalPage={totalPage}
-      ></Readitems>
+        totalPage={totalPage} />
     );
   }
 
@@ -262,11 +254,8 @@ class ReadScreen extends React.PureComponent {
     this.setState({ isVisible: !flag });
   }
 
-  SModeChange() {
-    let s = tht.state.SMode;
-    tht.setState({ SMode: !s }, () => {
-      AsyncStorage.setItem('SMode', JSON.stringify(!s));
-    });
+  SModeChange = () => {
+    this.props.dispatch(sunnyModeSwitch());
   }
 
   getChapterUrl(index) {
@@ -287,19 +276,17 @@ class ReadScreen extends React.PureComponent {
   render() {
     const ds = new ViewPager.DataSource({ pageHasChanged: (p1, p2) => p1 !== p2 });
     return (
-      <View style={[styles.container, this.state.SMode ? (styles.SunnyMode_container) : (styles.MoonMode_container)]}>
+      <View style={[styles.container, this.props.SMode ? (styles.SunnyMode_container) : (styles.MoonMode_container)]}>
         <StatusBar
           barStyle="light-content"
           hidden={!this.state.isVisible}
-          animation={true}
-        ></StatusBar>
+          animation={true} />
         {this.state.isVisible &&
           <Navigat
             navigation={this.props.navigation}
-            choose={1}
-          />}
+            choose={1} /> }
         {this.state.loadFlag ? (
-          <Text style={[styles.centr, !this.state.SMode && (styles.MoonMode_text)]}>
+          <Text style={[styles.centr, !this.props.SMode && (styles.MoonMode_text)]}>
             Loading...</Text>) :
           (<ViewPager
             dataSource={ds.cloneWithPages(getContextArr(this.state.currentItem.content, width))}
@@ -322,11 +309,16 @@ class ReadScreen extends React.PureComponent {
             navigation={this.props.navigation}
             showAlertSelected={this.showAlertSelected}
             SModeChange={this.SModeChange}
-            choose={2}
-          />}
+            choose={2} />}
       </View>
     );
   }
 }
 
-export default ReadScreen;
+function select(state) {
+  return {
+    SMode: state.app.sunnyMode,
+  }
+}
+
+export default connect(select)(ReadScreen);

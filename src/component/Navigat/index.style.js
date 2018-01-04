@@ -30,6 +30,6 @@ export default {
     textAlign: 'center',
   },
   FotterItems: {
-    color: "#fff", textAlign: 'center', fontSize: 12,
+    color: "#aaa", textAlign: 'center', fontSize: 12,
   },
 }
