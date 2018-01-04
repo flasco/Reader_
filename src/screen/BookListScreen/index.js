@@ -152,6 +152,7 @@ class BookPackage extends React.PureComponent {
     this.props.dispatch(listAdd({
       ...data,
       latestChapter: '待检测',
+      latestRead: new Date().getTime()
     }));
   }
 

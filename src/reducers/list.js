@@ -1,6 +1,3 @@
-/**
-* 这里以news的为例，还有其他的reducer，具体的可以参考样例完整代码
-*/
 import {
   LIST_ADD,
   LIST_READ,
@@ -46,13 +43,12 @@ export default list = (state = listState, action) => {
     case LIST_INIT:
       if (action.list && action.list.length > 0) {
         action.list.filter(x => x.latestRead === undefined && (x.latestRead = 0));
-        // console.log(action.list)
         return Object.assign({}, state, { list: action.list, isInit: true });
       } else {
         return Object.assign({}, state, { isInit: true });
       }
     case LIST_ADD:
-      state.list.push(action.book);
+      state.list.unshift(action.book);
       state.operationNum++;
       return Object.assign({}, state, { list: [...state.list] });
     case FETCH_FAILED:
@@ -74,11 +70,9 @@ export default list = (state = listState, action) => {
         if (x !== undefined) {
           state.operationNum++;
           let updateNum = state.list[index].updateNum + x.num; //记录之前的更新章节
-          console.log(x);
           state.list[index].latestChapter = x.title;
           state.list[index].isUpdate = updateNum > 0;
           state.list[index].updateNum = updateNum;
-          
         }
       });
       state.loadingFlag = false;

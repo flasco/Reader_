@@ -10,7 +10,6 @@ export const appState = {
   sunnyMode: true,
 }
 
-
 export default app = (state = appState, action) => {
   switch (action.type) {
     case MENU_CTL:

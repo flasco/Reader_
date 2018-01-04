@@ -7,7 +7,7 @@ export const initalState = {
   list: { ...listState },
   app: { ...appState },
 }
-//和导航相关的reducer通过从调用出传递进来
+
 const rootReducer = combineReducers({
   list,
   app,
