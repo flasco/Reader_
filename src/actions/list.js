@@ -6,7 +6,8 @@ import {
   LIST_INIT,
   LOADING_CTL,
   FETCH_FAILED,
-  OPERATION_CLEAR
+  OPERATION_CLEAR,
+  OPERATION_ADD
 } from './actionTypes';
 
 import getNet from '../util/getNet'
@@ -33,6 +34,10 @@ export function listAdd(book) {
     return getNet.refreshSingleChapter(book)
       .then(latestBook => dispatch(receiveAddFetch(latestBook)))
   }
+}
+
+export function OperationAdd() {
+  return { type: OPERATION_ADD }
 }
 
 export function OperationClear() {

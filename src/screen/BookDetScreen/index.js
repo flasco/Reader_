@@ -70,8 +70,13 @@ class BookDetScreen extends React.PureComponent {
 
   isContains = (book) => {
     return this.props.list.filter(x => {
-      return x.source === book.source
-    }).length  > 0;
+      return x.author === book.author && x.bookName === book.bookName
+    }).length > 0;
+  }
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
   }
 
   render() {

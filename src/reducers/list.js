@@ -6,7 +6,8 @@ import {
   LIST_INIT,
   LOADING_CTL,
   FETCH_FAILED,
-  OPERATION_CLEAR
+  OPERATION_CLEAR,
+  OPERATION_ADD
 } from '../actions/actionTypes';
 
 import { insertionSort } from '../util/sort'
@@ -37,6 +38,9 @@ export default list = (state = listState, action) => {
   switch (action.type) {
     case OPERATION_CLEAR:
       state.operationNum = 0;
+      return Object.assign({}, state);
+    case OPERATION_ADD:
+      state.operationNum++;
       return Object.assign({}, state);
     case LOADING_CTL:
       return Object.assign({}, state, { loadingFlag: action.flag });
