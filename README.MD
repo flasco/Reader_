@@ -1,5 +1,7 @@
 # Reader_
 
+> latest consummated prj: [Tassel](https://github.com/flasco/tassel)
+
 Summary: A Novel Reader Application powered by React Native 0.50.4 .
 
 Instructions will be completed step by step when I have enough time. :)
